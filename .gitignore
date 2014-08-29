@@ -1,11 +1,10 @@
 *.class
 *.jar
-core/target/*
+core/target
 *~
 *#
 java/target
-java/src
-html/*
-android/*
-ios/*
-flash/*
+html/target
+android/target
+ios/target
+flash/target

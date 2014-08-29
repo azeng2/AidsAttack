@@ -1,0 +1,14 @@
+<module rename-to='aidsattack'>
+  <inherits name='playn.PlayN'/>
+  <inherits name='AidsAttackAssets'/>
+  <!-- Box2D inclusion -->
+  <!-- Copied from showcase/html/src/main/java/playn/showcase/Showcase.gwt.xml -->
+  <inherits name="org.jbox2d.JBox2D" />
+
+  <source path='core'/>
+  <source path='html'/>
+
+  <public path="resources" />
+
+  <entry-point class='edu.gmu.hivgame.html.AidsAttackHtml'/>
+</module>
