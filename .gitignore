@@ -1,0 +1,10 @@
+*.class
+*.jar
+core/target/*
+*~
+*#
+java/*
+html/*
+android/*
+ios/*
+flash/*
