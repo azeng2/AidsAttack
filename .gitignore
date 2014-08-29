@@ -3,7 +3,8 @@
 core/target/*
 *~
 *#
-java/*
+java/target
+java/src
 html/*
 android/*
 ios/*
