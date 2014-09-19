@@ -21,6 +21,12 @@ import playn.core.GroupLayer;
 import playn.core.ImageLayer;
 import playn.core.Image;
 import playn.core.util.Callback;
+import playn.core.TextFormat;
+import playn.core.AbstractTextLayout;
+import playn.core.TextWrap;
+import playn.core.Font;
+import playn.core.util.TextBlock;
+
 
 public class Virus {
   // for calculating interpolation
@@ -42,6 +48,7 @@ public class Virus {
     v.addVirusLayer();
     game.addLayer(v.myLayer);
     game.addLayer(v.myDebugLayer);
+    game.addLayer(v.myHitCountLayer);
     v.prevX = v.x(); v.prevY = v.y(); v.prevA = v.ang();
     return v;
   }
@@ -100,13 +107,13 @@ public class Virus {
 
   // Add the virus layers
   private void addVirusLayer(){
-     this.loadVirusImage();
-     //this.drawVirusImage();
+     //this.loadVirusImage();
+     this.drawVirusImage();
      if(debugMe){
        this.drawDebugImage();
      }
+     this.makeHitCountImage();
   }
-
 
   // Debug scaling and image layer for the virus
   float debugScaleX, debugScaleY;
@@ -146,6 +153,56 @@ public class Virus {
 
   // Scale of image layer representing the virus
   float scaleX, scaleY;
+
+  //keep track of number of times the Virus has been hit by an Antibody
+  int hitCount;
+  float hitCountScaleX, hitCountScaleY;
+  ImageLayer myHitCountLayer;
+  
+  public int getHitCount(){
+    return this.hitCount;
+  }
+
+  public void addHit(){
+    hitCount++;
+  }
+  //creates image of hit count to be displayed each time virus is hit by antibody.
+  private void makeHitCountImage (){
+    //CanvasImage image = graphics().createImage(100,100);
+    //Canvas canvas = image.canvas();
+    //canvas.setStrokeWidth(2);
+    //canvas.setStrokeColor(0x5500ff00);
+    //canvas.strokeRect(1, 1, 50, 50);
+    Font font = graphics().createFont("Courier", Font.Style.PLAIN, 16);
+    String hits = Integer.toString(getHitCount());
+    TextFormat fmt = new TextFormat().withFont(font);
+    AbstractTextLayout tl = (AbstractTextLayout) graphics().layoutText(hits, fmt);
+   // canvas.fillText(tl, 0f, 0f);
+    TextWrap wrap = new TextWrap(200);
+    TextBlock block = new TextBlock(graphics().layoutText(hits, fmt, wrap));
+    myHitCountLayer = graphics().createImageLayer(block.toImage(TextBlock.Align.LEFT, 0xFF660000));
+
+
+
+    //myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
+    //scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
+    //scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
+
+    //myHitCountLayer.setScale(scaleX,scaleY);
+    //myHitCountLayer.setTranslation(x(), y());
+    //myHitCountLayer.setRotation(ang());
+
+    //String hits = Integer.toString(getHitCount());
+    //typecast interface TextLayout to AbstractTextLayout
+    //AbstractTextLayout tl = (AbstractTextLayout) graphics().layoutText(hits, 
+    //                                                                  new TextFormat());
+
+   // TextLayout tl = graphics().layoutText(hits, 
+  //                                                                    new TextFormat());
+
+    //canvas.fillText(tl, 0f, 0f);
+ 
+  }
     
   // Manually draw the image of the virus, currently as a red rectangle
   private void drawVirusImage(){
@@ -167,7 +224,7 @@ public class Virus {
 
   // Create an image version of the virus loaded from a graphic
   private void loadVirusImage(){
-    Image image = assets().getImage("images/HIV-virion.png");
+    Image image = assets().getImage("images/smiley.png");
     myLayer = graphics().createImageLayer(image);
     // Callback is required because image may not immediately load (?)
     image.addCallback(new Callback<Image>() {
@@ -197,6 +254,7 @@ public class Virus {
     });
 
   }
+
 
   // Get the sensor radius in physics units
   float getSensorRadius(){
@@ -279,6 +337,7 @@ public class Virus {
       myDebugLayer.setTranslation(x, y);
       myDebugLayer.setRotation(a);
     }
+    myHitCountLayer.setTranslation(20,20);
 
 
 
