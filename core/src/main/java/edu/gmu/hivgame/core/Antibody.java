@@ -30,9 +30,10 @@ import playn.core.util.Callback;
  * in Virus.java).
  */
 
-public class Antibody{
+public class Antibody implements CollisionHandler{
   private float prevX, prevY, prevA;
   private Body body;
+  private Fixture myBodyFixture;
   private ImageLayer myLayer;
   AidsAttack game;
   private boolean attracted;
@@ -69,9 +70,11 @@ public class Antibody{
     //currently same radius as Sensor added to Virus
     circleShape.m_radius = 2.0f;
     // density is 1.0f   
-    body.createFixture(circleShape, 1.0f);
+    this.myBodyFixture = body.createFixture(circleShape, 1.0f);
+    this.myBodyFixture.m_userData = this;
 
     this.body = body;
+    this.body.m_userData = this;
   }
 
   float scaleX, scaleY;
@@ -146,4 +149,17 @@ public class Antibody{
     prevA = ang();
   }
 
+  public void handleCollision(Fixture me, Fixture other){
+    if(other.m_userData instanceof Virus){
+      Virus v = (Virus) other.m_userData;
+      this.attractTowards(new Vec2(v.x(), v.y()));
+    }
+  }      
+
+  public void destroy(){
+    // remove graphics
+    this.game.removeLayer(this.myLayer);
+    // remove physics body
+    this.game.physicsWorld().destroyBody(this.body);
+  }
 }

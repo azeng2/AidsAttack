@@ -10,6 +10,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
@@ -30,10 +31,12 @@ import playn.core.Font;
 import playn.core.util.TextBlock;
 
 
-public class Virus {
+public class Virus implements CollisionHandler {
   // for calculating interpolation
   private float prevX, prevY, prevA;
   private Body body;
+  private Fixture myBodyFixture;
+  private Fixture mySensor;
   private ImageLayer myLayer;
   AidsAttack game;
 
@@ -58,11 +61,15 @@ public class Virus {
   public Body body(){ return this.body; }
   public Vec2 position(){ return this.body().getPosition(); }
   public Fixture sensor(){
-    Fixture fix = body.getFixtureList();
-    while(!fix.isSensor()){
-      fix = fix.getNext();
-    }
-    return fix;
+    return this.mySensor;
+    // Fixture fix = body.getFixtureList();
+    // while(!fix.isSensor()){
+    //   fix = fix.getNext();
+    // }
+    // return fix;
+  }
+  public Fixture bodyFixture(){
+    return this.myBodyFixture;
   }
 
   void initPhysicsBody(World world, float x, float y, float angle) {
@@ -90,9 +97,11 @@ public class Virus {
     fixtureDef.restitution = 0.4f;
     fixtureDef.density = 1.0f;
 
-    body.createFixture(fixtureDef);
+    this.myBodyFixture = body.createFixture(fixtureDef);
+    this.myBodyFixture.m_userData = this;
     // body.setLinearDamping(1.0f);
     this.body = body;
+    this.body.m_userData = this;
 
     //create sensor
     CircleShape circleShape = new CircleShape();
@@ -102,10 +111,23 @@ public class Virus {
     FixtureDef fd = new FixtureDef();
     fd.shape = circleShape;
     fd.isSensor = true;
-    body.createFixture(fd);
+    this.mySensor = body.createFixture(fd);
+    this.mySensor.m_userData = this;
   }
   
   
+  public void handleCollision(Fixture me, Fixture other){
+    if(me == this.myBodyFixture && other.m_userData instanceof Antibody){
+      this.addHit();
+      ((Antibody) other.m_userData).destroy();
+    }
+    if(me == this.mySensor){
+      System.out.println("I've been spotted by "+other.m_userData);
+    }
+
+    
+  }
+
 
   // Add the virus layers
   private void addVirusLayer(){
@@ -167,7 +189,26 @@ public class Virus {
 
   public void addHit(){
     hitCount++;
+    changeHitCountImage();     // Adjust the image
   }
+
+  public void changeHitCountImage(){
+    Font font = graphics().createFont("Courier", Font.Style.PLAIN, 16);
+    String hits = Integer.toString(getHitCount());
+    TextFormat fmt = new TextFormat().withFont(font);
+    //look to playn showcase text example and model after that?
+    //^Yes.
+    TextLayout tl = graphics().layoutText(hits, fmt);
+    //modeled after createTextLayer() in TextDemo.java in playn showcase
+    //some code very much the same (really just changed 'layout' to 'tl').
+    //how ok is this?
+    CanvasImage image = graphics().createImage((int)Math.ceil(tl.width()),
+                                                (int)Math.ceil(tl.height()));
+    //took out a line here setting fill color. Default seems to be black.
+    image.canvas().fillText(tl, 0, 0);
+    myHitCountLayer.setImage(image);
+  }
+
   //creates image of hit count to be displayed each time virus is hit by antibody.
   private void makeHitCountImage (){
     //CanvasImage image = graphics().createImage(100,100);
@@ -262,6 +303,8 @@ public class Virus {
     });
 
   }
+
+  
 
 
   // Get the sensor radius in physics units

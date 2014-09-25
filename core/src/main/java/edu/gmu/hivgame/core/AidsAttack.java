@@ -46,6 +46,9 @@ public class AidsAttack extends Game.Default {
   public void addLayer(Layer l){
     this.entityLayer.add(l);
   }
+  public void removeLayer(Layer l){
+    this.entityLayer.remove(l);
+  }
 
   public AidsAttack() {
     super(UPDATE_RATE); 
@@ -151,28 +154,40 @@ public class AidsAttack extends Game.Default {
     while(contact != null){
       Fixture fixtureA = contact.getFixtureA();
       Fixture fixtureB = contact.getFixtureB();
-      System.out.println("fixtureA: "+fixtureA.getBody());
-      System.out.println("fixtureB: "+fixtureB.getBody());
-      //iterate through the Antibodies in antibodies[], look more closely at ones that are in
-      //a contact.
-      if(fixtureA == theVirus.sensor()){
-        System.out.println("Sensor touching!");
-        for(int i=0; i<antibodies.length; i++){
-          if(fixtureB.getBody() == antibodies[i].body()){
-            antibodies[i].attractTowards(new Vec2(theVirus.x(), theVirus.y()));
-          }
-        }
+      if(fixtureA.m_userData instanceof CollisionHandler){
+        CollisionHandler ch = (CollisionHandler) fixtureA.m_userData;
+        ch.handleCollision(fixtureA, fixtureB);
       }
-      if(fixtureB == theVirus.sensor()){
-        System.out.println("Sensor touching!");
-        for(int i=0; i<antibodies.length; i++){
-          if(fixtureA.getBody() == antibodies[i].body()){
-            antibodies[i].attractTowards(new Vec2(theVirus.x(), theVirus.y()));
-          }
-        }
+      if(fixtureB.m_userData instanceof CollisionHandler){
+        CollisionHandler ch = (CollisionHandler) fixtureB.m_userData;
+        ch.handleCollision(fixtureB, fixtureA);
       }
       contact = contact.getNext();
     }
+
+      // System.out.println("fixtureA: "+fixtureA.getBody());
+      // System.out.println("fixtureB: "+fixtureB.getBody());
+      // //iterate through the Antibodies in antibodies[], look more closely at ones that are in
+      // //a contact.
+      // if(fixtureA == theVirus.sensor()){
+      //   System.out.println("Sensor touching!");
+      //   for(int i=0; i<antibodies.length; i++){
+      //     if(fixtureB.getBody() == antibodies[i].body()){
+      //       antibodies[i].attractTowards(new Vec2(theVirus.x(), theVirus.y()));
+      //     }
+      //   }
+      // }
+      // if(fixtureB == theVirus.sensor()){
+      //   System.out.println("Sensor touching!");
+      //   for(int i=0; i<antibodies.length; i++){
+      //     if(fixtureA.getBody() == antibodies[i].body()){
+      //       antibodies[i].attractTowards(new Vec2(theVirus.x(), theVirus.y()));
+      //     }
+      //   }
+      // }
+      // if( fixtureA == theVirus.bodyFixture() || fixtureB == theVirus.bodyFixture()){
+      //   theVirus.addHit();
+      // }
 
     // the step delta is fixed so box2d isn't affected by framerate
     world.step(0.033f, 10, 10);
