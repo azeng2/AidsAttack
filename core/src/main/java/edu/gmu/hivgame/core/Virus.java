@@ -1,5 +1,6 @@
 package edu.gmu.hivgame.core;
 
+import java.lang.Math;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -23,6 +24,7 @@ import playn.core.Image;
 import playn.core.util.Callback;
 import playn.core.TextFormat;
 import playn.core.AbstractTextLayout;
+import playn.core.TextLayout;
 import playn.core.TextWrap;
 import playn.core.Font;
 import playn.core.util.TextBlock;
@@ -176,32 +178,38 @@ public class Virus {
     Font font = graphics().createFont("Courier", Font.Style.PLAIN, 16);
     String hits = Integer.toString(getHitCount());
     TextFormat fmt = new TextFormat().withFont(font);
-    AbstractTextLayout tl = (AbstractTextLayout) graphics().layoutText(hits, fmt);
-   // canvas.fillText(tl, 0f, 0f);
-    TextWrap wrap = new TextWrap(200);
-    TextBlock block = new TextBlock(graphics().layoutText(hits, fmt, wrap));
-    myHitCountLayer = graphics().createImageLayer(block.toImage(TextBlock.Align.LEFT, 0xFF660000));
+    //look to playn showcase text example and model after that?
+    //^Yes.
+    TextLayout tl = graphics().layoutText(hits, fmt);
+    //modeled after createTextLayer() in TextDemo.java in playn showcase
+    //some code very much the same (really just changed 'layout' to 'tl').
+    //how ok is this?
+    CanvasImage image = graphics().createImage((int)Math.ceil(tl.width()),
+                                                (int)Math.ceil(tl.height()));
+    //took out a line here setting fill color. Default seems to be black.
+    image.canvas().fillText(tl, 0, 0);
+    //^end of code from playn showcase file.
+    myHitCountLayer = graphics().createImageLayer(image);
+    myHitCountLayer.setScale(scaleX,scaleY);
+    myHitCountLayer.setTranslation(x(), y());
+    //does this really do anything?
+    myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
 
-
-
-    //myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
+    //Can I get rid of these comments? Or should I keep them for reference?
+    // canvas.fillText(tl, 0f, 0f);
+    //TextWrap wrap = new TextWrap(200);
+    //TextBlock block = new TextBlock(graphics().layoutText(hits, fmt, wrap));
+    //myHitCountLayer = graphics().createImageLayer(block.toImage(TextBlock.Align.LEFT, 0xFF660000));
     //scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
     //scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
-
-    //myHitCountLayer.setScale(scaleX,scaleY);
-    //myHitCountLayer.setTranslation(x(), y());
     //myHitCountLayer.setRotation(ang());
-
     //String hits = Integer.toString(getHitCount());
     //typecast interface TextLayout to AbstractTextLayout
     //AbstractTextLayout tl = (AbstractTextLayout) graphics().layoutText(hits, 
     //                                                                  new TextFormat());
-
    // TextLayout tl = graphics().layoutText(hits, 
   //                                                                    new TextFormat());
-
     //canvas.fillText(tl, 0f, 0f);
- 
   }
     
   // Manually draw the image of the virus, currently as a red rectangle
