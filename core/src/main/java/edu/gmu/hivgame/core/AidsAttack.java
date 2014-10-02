@@ -143,13 +143,12 @@ public class AidsAttack extends Game.Default {
     if(this.attractingVirus){
       theVirus.attractTowards(virusTarget);
     }
-
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
     }
-    //TODO: finish this portion. Find any contact between theVirus.sensor() and
-    // the Antibodies, then have antibodies attract toward
-    // theVirus. Possibly reduce force?
+
+    //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
+    //and they implement the interface CollisionHandler.
     Contact contact = world.getContactList();
     while(contact != null){
       Fixture fixtureA = contact.getFixtureA();
@@ -165,33 +164,8 @@ public class AidsAttack extends Game.Default {
       contact = contact.getNext();
     }
 
-      // System.out.println("fixtureA: "+fixtureA.getBody());
-      // System.out.println("fixtureB: "+fixtureB.getBody());
-      // //iterate through the Antibodies in antibodies[], look more closely at ones that are in
-      // //a contact.
-      // if(fixtureA == theVirus.sensor()){
-      //   System.out.println("Sensor touching!");
-      //   for(int i=0; i<antibodies.length; i++){
-      //     if(fixtureB.getBody() == antibodies[i].body()){
-      //       antibodies[i].attractTowards(new Vec2(theVirus.x(), theVirus.y()));
-      //     }
-      //   }
-      // }
-      // if(fixtureB == theVirus.sensor()){
-      //   System.out.println("Sensor touching!");
-      //   for(int i=0; i<antibodies.length; i++){
-      //     if(fixtureA.getBody() == antibodies[i].body()){
-      //       antibodies[i].attractTowards(new Vec2(theVirus.x(), theVirus.y()));
-      //     }
-      //   }
-      // }
-      // if( fixtureA == theVirus.bodyFixture() || fixtureB == theVirus.bodyFixture()){
-      //   theVirus.addHit();
-      // }
-
     // the step delta is fixed so box2d isn't affected by framerate
     world.step(0.033f, 10, 10);
-
   }
 
   @Override
@@ -202,7 +176,5 @@ public class AidsAttack extends Game.Default {
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].paint(alpha);
     }
-
-
   }
 }

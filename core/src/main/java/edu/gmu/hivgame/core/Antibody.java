@@ -22,14 +22,6 @@ import playn.core.ImageLayer;
 import playn.core.Image;
 import playn.core.util.Callback;
 
-/* Magnet object currently not appearing when game is run.
- * Possible causes: image under another image layer; no actual
- * image displaying; Physics Body has some flaw (density, etc)
- * that causes it to not appear; positioned outside of screen;
- * not updating with each time step (see paint and update methods
- * in Virus.java).
- */
-
 public class Antibody implements CollisionHandler{
   private float prevX, prevY, prevA;
   private Body body;

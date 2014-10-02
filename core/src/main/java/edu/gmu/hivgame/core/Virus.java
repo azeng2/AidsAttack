@@ -42,8 +42,6 @@ public class Virus implements CollisionHandler {
 
   boolean debugMe = true;       // set to true when debugging; draw additional info
 
-  //private Magnet magnet;
-
   private Virus(){
   }
   public static Virus make(AidsAttack game, float x, float y, float ang){
@@ -62,11 +60,6 @@ public class Virus implements CollisionHandler {
   public Vec2 position(){ return this.body().getPosition(); }
   public Fixture sensor(){
     return this.mySensor;
-    // Fixture fix = body.getFixtureList();
-    // while(!fix.isSensor()){
-    //   fix = fix.getNext();
-    // }
-    // return fix;
   }
   public Fixture bodyFixture(){
     return this.myBodyFixture;
@@ -115,7 +108,6 @@ public class Virus implements CollisionHandler {
     this.mySensor.m_userData = this;
   }
   
-  
   public void handleCollision(Fixture me, Fixture other){
     if(me == this.myBodyFixture && other.m_userData instanceof Antibody){
       this.addHit();
@@ -124,10 +116,7 @@ public class Virus implements CollisionHandler {
     if(me == this.mySensor){
       System.out.println("I've been spotted by "+other.m_userData);
     }
-
-    
   }
-
 
   // Add the virus layers
   private void addVirusLayer(){
@@ -211,11 +200,6 @@ public class Virus implements CollisionHandler {
 
   //creates image of hit count to be displayed each time virus is hit by antibody.
   private void makeHitCountImage (){
-    //CanvasImage image = graphics().createImage(100,100);
-    //Canvas canvas = image.canvas();
-    //canvas.setStrokeWidth(2);
-    //canvas.setStrokeColor(0x5500ff00);
-    //canvas.strokeRect(1, 1, 50, 50);
     Font font = graphics().createFont("Courier", Font.Style.PLAIN, 16);
     String hits = Integer.toString(getHitCount());
     TextFormat fmt = new TextFormat().withFont(font);
@@ -235,22 +219,7 @@ public class Virus implements CollisionHandler {
     myHitCountLayer.setTranslation(x(), y());
     //does this really do anything?
     myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-
-    //Can I get rid of these comments? Or should I keep them for reference?
-    // canvas.fillText(tl, 0f, 0f);
-    //TextWrap wrap = new TextWrap(200);
-    //TextBlock block = new TextBlock(graphics().layoutText(hits, fmt, wrap));
-    //myHitCountLayer = graphics().createImageLayer(block.toImage(TextBlock.Align.LEFT, 0xFF660000));
-    //scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
-    //scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
     //myHitCountLayer.setRotation(ang());
-    //String hits = Integer.toString(getHitCount());
-    //typecast interface TextLayout to AbstractTextLayout
-    //AbstractTextLayout tl = (AbstractTextLayout) graphics().layoutText(hits, 
-    //                                                                  new TextFormat());
-   // TextLayout tl = graphics().layoutText(hits, 
-  //                                                                    new TextFormat());
-    //canvas.fillText(tl, 0f, 0f);
   }
     
   // Manually draw the image of the virus, currently as a red rectangle
@@ -279,14 +248,13 @@ public class Virus implements CollisionHandler {
     image.addCallback(new Callback<Image>() {
       @Override
       public void onSuccess(Image image) {
-  	myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
+      	myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
         scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
         scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
-  	// System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
-  	myLayer.setScale(scaleX,scaleY);
-  	myLayer.setTranslation(x(), y());
-  	myLayer.setRotation(ang());
-
+       	// System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
+  	    myLayer.setScale(scaleX,scaleY);
+  	    myLayer.setTranslation(x(), y());
+  	    myLayer.setRotation(ang());
 
         // // since the image is loaded, we can use its width and height
         // layer.setOrigin(image.width() / 2f, image.height() / 2f);
@@ -305,7 +273,6 @@ public class Virus implements CollisionHandler {
   }
 
   
-
 
   // Get the sensor radius in physics units
   float getSensorRadius(){
@@ -348,8 +315,8 @@ public class Virus implements CollisionHandler {
       Vec2 v = body.getWorldPoint(sh.getVertex(i));
       float dist2 = v.sub(target).lengthSquared();
       if(dist2 < closestDist2*.98){ // scale a little to prevent sudden changes
-	closest = v;
-	closestDist2 = dist2;
+      	closest = v;
+      	closestDist2 = dist2;
       }
     }
     return closest;
@@ -388,18 +355,15 @@ public class Virus implements CollisionHandler {
       myDebugLayer.setTranslation(x, y);
       myDebugLayer.setRotation(a);
     }
-    myHitCountLayer.setTranslation(20,20);
-
-
+    //makes hit counter travel with the virus
+    myHitCountLayer.setTranslation(x,y);
 
     // float scale = (float) 0.1f;
     // myLayer.transform().setUniformScale(scale);    
-
     // float scale = 1.0f; // + 0.25f*((float) Math.sin(angle));
     // myLayer.setScale(scale,scale);
     // myLayer.transform().setUniformScale(scale);    
   }
-
 
   public void update(float delta) {
     // store state for interpolation in paint()
@@ -407,6 +371,4 @@ public class Virus implements CollisionHandler {
     prevY = y();
     prevA = ang();
   }
-
-
 }
