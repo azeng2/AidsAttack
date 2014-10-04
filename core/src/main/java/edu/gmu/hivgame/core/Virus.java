@@ -228,7 +228,11 @@ public class Virus implements CollisionHandler {
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xffff0000);
-    canvas.strokeRect(1, 1, 96, 96);
+    float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
+    float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
+    //coordinates are for upper-left corner placement
+    canvas.strokeRect(image.width()/2f-(screenWidth/2f), image.height()/2f-(screenHeight/2f), screenWidth, screenHeight);
+    //canvas.strokeCircle(image.width()/2f, image.height()/2f, getWidth());
 
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
@@ -345,10 +349,11 @@ public class Virus implements CollisionHandler {
     float a = (ang() * alpha) + (prevA * (1f - alpha));
     myLayer.setTranslation(x, y);
     myLayer.setRotation(a);
+    //commented out temporarily for graphics layer testing
+//    float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
+//    float scale = (float) Math.sin(angle)*0.1f + 1f;
+//    myLayer.setScale(scaleX*scale,scaleY*scale);
 
-    float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
-    float scale = (float) Math.sin(angle)*0.1f + 1f;
-    myLayer.setScale(scaleX*scale,scaleY*scale);
     // myDebugLayer.setScale(scaleX*scale,scaleY*scale);
         
     if(debugMe){

@@ -59,8 +59,7 @@ public class Antibody implements CollisionHandler{
     Body body = world.createBody(bodyDef);
 
     CircleShape circleShape = new CircleShape();
-    //currently same radius as Sensor added to Virus
-    circleShape.m_radius = 2.0f;
+    circleShape.m_radius = getRadius();
     // density is 1.0f   
     this.myBodyFixture = body.createFixture(circleShape, 1.0f);
     this.myBodyFixture.m_userData = this;
@@ -75,8 +74,8 @@ public class Antibody implements CollisionHandler{
     Fixture fix = body.getFixtureList();
     CircleShape s = (CircleShape) fix.getShape();
     float physRad = s.getRadius();
-
     float screenRad = physRad / AidsAttack.physUnitPerScreenUnit;
+//    float screenRad = this.getRadius() / AidsAttack.physUnitPerScreenUnit;
     //System.out.printf("Antibody physRad: %f\nscreenRad: %f\n",physRad,screenRad);
     //why random number?
     //screenRad = 50f;
@@ -100,10 +99,13 @@ public class Antibody implements CollisionHandler{
   }
 
   float getWidth(){
-    return 1.0f;
+    return getRadius()/2;
   }
   float getHeight(){
-    return 1.0f;
+    return getRadius()/2;
+  }
+  float getRadius(){
+    return 1.5f;
   }
 
   float x(){
