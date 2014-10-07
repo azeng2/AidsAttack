@@ -58,12 +58,8 @@ public class Virus implements CollisionHandler {
 
   public Body body(){ return this.body; }
   public Vec2 position(){ return this.body().getPosition(); }
-  public Fixture sensor(){
-    return this.mySensor;
-  }
-  public Fixture bodyFixture(){
-    return this.myBodyFixture;
-  }
+  public Fixture sensor(){ return this.mySensor; }
+  public Fixture bodyFixture(){ return this.myBodyFixture; }
 
   void initPhysicsBody(World world, float x, float y, float angle) {
     BodyDef bodyDef = new BodyDef();
@@ -83,6 +79,10 @@ public class Virus implements CollisionHandler {
     polygon[2] = new Vec2(getWidth()/2f, getHeight()/2f);
     polygon[3] = new Vec2(-getWidth()/2f, getHeight()/2f);
     polygonShape.set(polygon, polygon.length);
+    //experiment, setting as a box. I'm not entirely sure what this method is meant to do.
+    //goal is to get physical shape to actually align with image.
+    //Image may currently not correspond with the shape at all.
+//    polygonShape.setAsBox(this.getWidth()/2, this.getHeight()/2);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = polygonShape;
@@ -134,11 +134,7 @@ public class Virus implements CollisionHandler {
 
   // Draw a debugging image of the virus usually including its sensor
   private void drawDebugImage(){
-    Fixture fix = body.getFixtureList();
-    if(!fix.isSensor()){
-      fix = fix.getNext();
-    }
-    CircleShape s = (CircleShape) fix.getShape();
+    CircleShape s = (CircleShape) sensor().getShape();
     float physRad = s.getRadius();
 
     float screenRad = physRad / AidsAttack.physUnitPerScreenUnit;
@@ -163,9 +159,6 @@ public class Virus implements CollisionHandler {
     myDebugLayer.setTranslation(x(), y());
     myDebugLayer.setRotation(ang());
   }
-
-  // Scale of image layer representing the virus
-  float scaleX, scaleY;
 
   //keep track of number of times the Virus has been hit by an Antibody
   int hitCount;
@@ -221,12 +214,15 @@ public class Virus implements CollisionHandler {
     myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     //myHitCountLayer.setRotation(ang());
   }
+
+  // Scale of image layer representing the virus
+  float scaleX, scaleY;
     
   // Manually draw the image of the virus, currently as a red rectangle
   private void drawVirusImage(){
     CanvasImage image = graphics().createImage(100, 100);
     Canvas canvas = image.canvas();
-    canvas.setStrokeWidth(2);
+    canvas.setStrokeWidth(1);
     canvas.setStrokeColor(0xffff0000);
     float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
     float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
@@ -236,8 +232,10 @@ public class Virus implements CollisionHandler {
 
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
-    scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
+    //scaleX = (getWidth() / ...)
+    //scaleY = (getHeight() / ...)
+    scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
+    scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(scaleX,scaleY);
     myLayer.setTranslation(x(), y());
@@ -308,10 +306,7 @@ public class Virus implements CollisionHandler {
 
   // Find the closest vertex of the internal virus polygon to a given point
   public Vec2 closestVertex(Vec2 target){
-    Fixture fix = body.getFixtureList();
-    if(fix.isSensor()){
-      fix = fix.getNext();
-    }
+    Fixture fix = this.bodyFixture();
     PolygonShape sh = (PolygonShape) fix.getShape();
     Vec2 closest = body.getWorldPoint(sh.getVertex(0));
     float closestDist2 = closest.sub(target).lengthSquared();

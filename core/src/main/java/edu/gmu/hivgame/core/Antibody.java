@@ -89,8 +89,13 @@ public class Antibody implements CollisionHandler{
 
     this.myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
-    scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
+//    scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
+//    scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
+    //experiment: scaling change.
+    //success! Viruses now interact with each other when their image edges touch, so image
+    //is correctly scaled to physical object.
+    scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
+    scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(scaleX,scaleY);
 
