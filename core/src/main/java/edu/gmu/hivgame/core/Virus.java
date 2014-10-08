@@ -211,6 +211,7 @@ public class Virus implements CollisionHandler {
     myHitCountLayer = graphics().createImageLayer(image);
     myHitCountLayer.setScale(scaleX,scaleY);
     myHitCountLayer.setTranslation(x(), y());
+    myHitCountLayer.setRotation(ang());
     //does this really do anything?
     myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     //myHitCountLayer.setRotation(ang());
@@ -345,6 +346,7 @@ public class Virus implements CollisionHandler {
     float a = (ang() * alpha) + (prevA * (1f - alpha));
     myLayer.setTranslation(x, y);
     myLayer.setRotation(a);
+    myHitCountLayer.setRotation(a);
     //commented out temporarily for graphics layer testing
 //    float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
 //    float scale = (float) Math.sin(angle)*0.1f + 1f;
