@@ -99,6 +99,7 @@ public class Virus implements CollisionHandler {
     //create sensor
     CircleShape circleShape = new CircleShape();
     circleShape.m_radius = this.getSensorRadius();
+    //position, relative to body position
     circleShape.m_p.set(0.0f, 0.0f);
 
     FixtureDef fd = new FixtureDef();
@@ -142,11 +143,11 @@ public class Virus implements CollisionHandler {
     //why random number?
     //screenRad = 50f;
 
-    CanvasImage image = graphics().createImage(100, 100);
+    CanvasImage image = graphics().createImage(200, 200);
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xffffff00);
-    canvas.strokeCircle(50f,50f,screenRad);
+    canvas.strokeCircle(image.width()/2f,image.height()/2f,screenRad);
 
     this.myDebugLayer = graphics().createImageLayer(image);
     myDebugLayer.setOrigin(image.width() / 2f, image.height() / 2f);
@@ -155,7 +156,7 @@ public class Virus implements CollisionHandler {
     this.debugScaleX = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
     this.debugScaleY = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
     //    System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
-    myDebugLayer.setScale(debugScaleX,debugScaleY);
+    myDebugLayer.setScale(scaleX,scaleY);
     myDebugLayer.setTranslation(x(), y());
     myDebugLayer.setRotation(ang());
   }
@@ -222,7 +223,7 @@ public class Virus implements CollisionHandler {
   private void drawVirusImage(){
     CanvasImage image = graphics().createImage(100, 100);
     Canvas canvas = image.canvas();
-    canvas.setStrokeWidth(1);
+    canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xffff0000);
     float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
     float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
@@ -278,17 +279,17 @@ public class Virus implements CollisionHandler {
 
   // Get the sensor radius in physics units
   float getSensorRadius(){
-    return 5f;
+    return 3f;
   }
 
   // Get the widht/height of the virus in physics units
   float getWidth() {
-    return 1.0f;
+    return 1.5f;
   }
 
   // Get the widht/height of the virus in physics units
   float getHeight() {
-    return 1.0f;
+    return 1.5f;
   }
 
   // X/Y position and angle of the center of the virus in physics units

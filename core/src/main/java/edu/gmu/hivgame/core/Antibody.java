@@ -103,6 +103,7 @@ public class Antibody implements CollisionHandler{
     myLayer.setRotation(ang());
   }
 
+  //why are width and height radius/2?
   float getWidth(){
     return getRadius()/2;
   }
