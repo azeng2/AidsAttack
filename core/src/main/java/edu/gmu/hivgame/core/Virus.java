@@ -147,16 +147,16 @@ public class Virus implements CollisionHandler {
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xffffff00);
-    canvas.strokeCircle(image.width()/2f,image.height()/2f,screenRad);
+    canvas.strokeCircle(image.width()/2f,image.height()/2f,200/2);
 
     this.myDebugLayer = graphics().createImageLayer(image);
     myDebugLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     //this.debugScaleX = (screenRad) / image.width();
     //this.debugScaleY = (screenRad) / image.width();
-    this.debugScaleX = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
-    this.debugScaleY = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
+    //this.debugScaleX = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
+    //this.debugScaleY = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
     //    System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
-    myDebugLayer.setScale(scaleX,scaleY);
+    myDebugLayer.setScale(physRad*2/200, physRad*2/200);
     myDebugLayer.setTranslation(x(), y());
     myDebugLayer.setRotation(ang());
   }
@@ -209,7 +209,7 @@ public class Virus implements CollisionHandler {
     image.canvas().fillText(tl, 0, 0);
     //^end of code from playn showcase file.
     myHitCountLayer = graphics().createImageLayer(image);
-    myHitCountLayer.setScale(scaleX,scaleY);
+    myHitCountLayer.setScale(1f,1f);
     myHitCountLayer.setTranslation(x(), y());
     myHitCountLayer.setRotation(ang());
     //does this really do anything?
@@ -222,14 +222,15 @@ public class Virus implements CollisionHandler {
     
   // Manually draw the image of the virus, currently as a red rectangle
   private void drawVirusImage(){
-    CanvasImage image = graphics().createImage(100, 100);
+    float imageSize = 100;
+    CanvasImage image = graphics().createImage(imageSize, imageSize);
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xffff0000);
     float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
     float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
     //coordinates are for upper-left corner placement
-    canvas.strokeRect(image.width()/2f-(screenWidth/2f), image.height()/2f-(screenHeight/2f), screenWidth, screenHeight);
+    canvas.strokeRect(2f, 2f, imageSize-4, imageSize-4);
     //canvas.strokeCircle(image.width()/2f, image.height()/2f, getWidth());
 
     myLayer = graphics().createImageLayer(image);
@@ -239,7 +240,7 @@ public class Virus implements CollisionHandler {
     scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
     scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
-    myLayer.setScale(scaleX,scaleY);
+    myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
   }
