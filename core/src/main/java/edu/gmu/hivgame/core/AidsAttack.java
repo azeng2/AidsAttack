@@ -29,7 +29,7 @@ import playn.core.util.Callback;
 public class AidsAttack extends Game.Default {
 
   // Scaling of meters / pixels ratio for drawing scales
-  public static float physUnitPerScreenUnit = 1 / 10.0f;
+  public static float physUnitPerScreenUnit = 1 / 20.0f;
   private static int width = 24;
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
@@ -63,6 +63,10 @@ public class AidsAttack extends Game.Default {
 
     // create our world layer (scaled to "world space")
     worldLayer = graphics().createGroupLayer();
+    //experiment
+    float sx = graphics().screenWidth()/width;
+    float sy = graphics().screenHeight()/height;
+    //worldLayer.setScale(Math.min(sx,sy)/physUnitPerScreenUnit);
     worldLayer.setScale(1f / physUnitPerScreenUnit);
     graphics().rootLayer().add(worldLayer);
 

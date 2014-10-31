@@ -79,10 +79,6 @@ public class Virus implements CollisionHandler {
     polygon[2] = new Vec2(getWidth()/2f, getHeight()/2f);
     polygon[3] = new Vec2(-getWidth()/2f, getHeight()/2f);
     polygonShape.set(polygon, polygon.length);
-    //experiment, setting as a box. I'm not entirely sure what this method is meant to do.
-    //goal is to get physical shape to actually align with image.
-    //Image may currently not correspond with the shape at all.
-//    polygonShape.setAsBox(this.getWidth()/2, this.getHeight()/2);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = polygonShape;
@@ -112,7 +108,7 @@ public class Virus implements CollisionHandler {
   public void handleCollision(Fixture me, Fixture other){
     if(me == this.myBodyFixture && other.m_userData instanceof Antibody){
       this.addHit();
-      ((Antibody) other.m_userData).destroy();
+      //((Antibody) other.m_userData).destroy();
     }
     if(me == this.mySensor){
       System.out.println("I've been spotted by "+other.m_userData);
@@ -145,7 +141,7 @@ public class Virus implements CollisionHandler {
 
     CanvasImage image = graphics().createImage(200, 200);
     Canvas canvas = image.canvas();
-    canvas.setStrokeWidth(2);
+    canvas.setStrokeWidth(4);
     canvas.setStrokeColor(0xffffff00);
     canvas.strokeCircle(image.width()/2f,image.height()/2f,200/2);
 
@@ -156,7 +152,7 @@ public class Virus implements CollisionHandler {
     //this.debugScaleX = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
     //this.debugScaleY = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
     //    System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
-    myDebugLayer.setScale(physRad*2/200, physRad*2/200);
+    myDebugLayer.setScale(sensorWidth()/image.width(), sensorHeight()/image.height());
     myDebugLayer.setTranslation(x(), y());
     myDebugLayer.setRotation(ang());
   }
@@ -209,7 +205,7 @@ public class Virus implements CollisionHandler {
     image.canvas().fillText(tl, 0, 0);
     //^end of code from playn showcase file.
     myHitCountLayer = graphics().createImageLayer(image);
-    myHitCountLayer.setScale(1f,1f);
+    myHitCountLayer.setScale(scaleX,scaleY);
     myHitCountLayer.setTranslation(x(), y());
     myHitCountLayer.setRotation(ang());
     //does this really do anything?
@@ -225,10 +221,10 @@ public class Virus implements CollisionHandler {
     float imageSize = 100;
     CanvasImage image = graphics().createImage(imageSize, imageSize);
     Canvas canvas = image.canvas();
-    canvas.setStrokeWidth(2);
+    canvas.setStrokeWidth(4);
     canvas.setStrokeColor(0xffff0000);
-    float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
-    float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
+    //float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
+    //float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
     //coordinates are for upper-left corner placement
     canvas.strokeRect(2f, 2f, imageSize-4, imageSize-4);
     //canvas.strokeCircle(image.width()/2f, image.height()/2f, getWidth());
@@ -282,6 +278,12 @@ public class Virus implements CollisionHandler {
   // Get the sensor radius in physics units
   float getSensorRadius(){
     return 3f;
+  }
+  float sensorWidth(){
+    return getSensorRadius()*2;
+  }
+  float sensorHeight(){
+    return getSensorRadius()*2;
   }
 
   // Get the widht/height of the virus in physics units

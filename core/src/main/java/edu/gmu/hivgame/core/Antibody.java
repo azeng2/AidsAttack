@@ -85,19 +85,19 @@ public class Antibody implements CollisionHandler{
     Canvas canvas = image.canvas();
     //canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xff000000);
-    canvas.fillCircle(50f,50f,screenRad);
+    canvas.fillCircle(50f,50f,50f);
 
     this.myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
 //    scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
 //    scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
     //experiment: scaling change.
-    //success! Viruses now interact with each other when their image edges touch, so image
+    //success! Antibodies now interact with each other when their image edges touch, so image
     //is correctly scaled to physical object.
     scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
     scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
-    myLayer.setScale(scaleX,scaleY);
+    myLayer.setScale(getWidth()/image.width(),getHeight()/image.height());
 
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
@@ -105,10 +105,10 @@ public class Antibody implements CollisionHandler{
 
   //why are width and height radius/2?
   float getWidth(){
-    return getRadius()/2;
+    return getRadius()*2;
   }
   float getHeight(){
-    return getRadius()/2;
+    return getRadius()*2;
   }
   float getRadius(){
     return 1.5f;
