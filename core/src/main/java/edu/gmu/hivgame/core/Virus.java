@@ -125,33 +125,17 @@ public class Virus implements CollisionHandler {
      this.makeHitCountImage();
   }
 
-  // Debug scaling and image layer for the virus
-  float debugScaleX, debugScaleY;
   ImageLayer myDebugLayer;
 
   // Draw a debugging image of the virus usually including its sensor
   private void drawDebugImage(){
-    CircleShape s = (CircleShape) sensor().getShape();
-    float physRad = s.getRadius();
-
-    float screenRad = physRad / AidsAttack.physUnitPerScreenUnit;
-    //System.out.printf("sensor physRad: %f\nscreenRad: %f\n",physRad,screenRad);
-    //why random number?
-    //screenRad = 50f;
-
-    CanvasImage image = graphics().createImage(200, 200);
+    CanvasImage image = graphics().createImage(100, 100);
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(4);
     canvas.setStrokeColor(0xffffff00);
-    canvas.strokeCircle(image.width()/2f,image.height()/2f,200/2);
-
+    canvas.strokeCircle(image.width()/2f,image.height()/2f,100/2f);
     this.myDebugLayer = graphics().createImageLayer(image);
     myDebugLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    //this.debugScaleX = (screenRad) / image.width();
-    //this.debugScaleY = (screenRad) / image.width();
-    //this.debugScaleX = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
-    //this.debugScaleY = (1f / AidsAttack.physUnitPerScreenUnit) / image.width();
-    //    System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myDebugLayer.setScale(sensorWidth()/image.width(), sensorHeight()/image.height());
     myDebugLayer.setTranslation(x(), y());
     myDebugLayer.setRotation(ang());
@@ -159,7 +143,6 @@ public class Virus implements CollisionHandler {
 
   //keep track of number of times the Virus has been hit by an Antibody
   int hitCount;
-  float hitCountScaleX, hitCountScaleY;
   ImageLayer myHitCountLayer;
   
   public int getHitCount(){
@@ -175,8 +158,6 @@ public class Virus implements CollisionHandler {
     Font font = graphics().createFont("Courier", Font.Style.PLAIN, 16);
     String hits = Integer.toString(getHitCount());
     TextFormat fmt = new TextFormat().withFont(font);
-    //look to playn showcase text example and model after that?
-    //^Yes.
     TextLayout tl = graphics().layoutText(hits, fmt);
     //modeled after createTextLayer() in TextDemo.java in playn showcase
     //some code very much the same (really just changed 'layout' to 'tl').
@@ -193,8 +174,6 @@ public class Virus implements CollisionHandler {
     Font font = graphics().createFont("Courier", Font.Style.PLAIN, 16);
     String hits = Integer.toString(getHitCount());
     TextFormat fmt = new TextFormat().withFont(font);
-    //look to playn showcase text example and model after that?
-    //^Yes.
     TextLayout tl = graphics().layoutText(hits, fmt);
     //modeled after createTextLayer() in TextDemo.java in playn showcase
     //some code very much the same (really just changed 'layout' to 'tl').
@@ -205,12 +184,16 @@ public class Virus implements CollisionHandler {
     image.canvas().fillText(tl, 0, 0);
     //^end of code from playn showcase file.
     myHitCountLayer = graphics().createImageLayer(image);
-    myHitCountLayer.setScale(scaleX,scaleY);
+
+    //longerSide is necessary so that text does not slant and change scale when virus rotates.
+    //ensures vertical and horizontal scales are equal, even when image is not square.
+    float longerSide = Math.max(image.width(),image.height());
+    myHitCountLayer.setScale(1f/longerSide,1f/longerSide);
     myHitCountLayer.setTranslation(x(), y());
     myHitCountLayer.setRotation(ang());
+
     //does this really do anything?
     myHitCountLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    //myHitCountLayer.setRotation(ang());
   }
 
   // Scale of image layer representing the virus
@@ -223,16 +206,12 @@ public class Virus implements CollisionHandler {
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(4);
     canvas.setStrokeColor(0xffff0000);
-    //float screenWidth = getWidth() / AidsAttack.physUnitPerScreenUnit;
-    //float screenHeight = getHeight() / AidsAttack.physUnitPerScreenUnit;
     //coordinates are for upper-left corner placement
-    canvas.strokeRect(2f, 2f, imageSize-4, imageSize-4);
-    //canvas.strokeCircle(image.width()/2f, image.height()/2f, getWidth());
+    canvas.strokeRect(0f, 0f, imageSize, imageSize);
 
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    //scaleX = (getWidth() / ...)
-    //scaleY = (getHeight() / ...)
+    //do we need this scaleX and scaleY?
     scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
     scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);

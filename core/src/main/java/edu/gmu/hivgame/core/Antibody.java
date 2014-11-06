@@ -37,10 +37,8 @@ public class Antibody implements CollisionHandler{
     Antibody a = new Antibody();
     a.game = game;
     a.initPhysicsBody(game.physicsWorld(), x, y, ang);
-    //maybe need to add image layer?
     a.drawAntibodyImage();
     game.addLayer(a.myLayer);
-    //currently not appearing on game screen
     a.prevX = a.x(); a.prevY = a.y(); a.prevA = a.ang();
     a.attracted = false;
     return a;
@@ -68,17 +66,11 @@ public class Antibody implements CollisionHandler{
     this.body.m_userData = this;
   }
 
-  float scaleX, scaleY;
-
   private void drawAntibodyImage(){
     Fixture fix = body.getFixtureList();
     CircleShape s = (CircleShape) fix.getShape();
     float physRad = s.getRadius();
     float screenRad = physRad / AidsAttack.physUnitPerScreenUnit;
-//    float screenRad = this.getRadius() / AidsAttack.physUnitPerScreenUnit;
-    //System.out.printf("Antibody physRad: %f\nscreenRad: %f\n",physRad,screenRad);
-    //why random number?
-    //screenRad = 50f;
 
     CanvasImage image = graphics().createImage(100, 100);
 
@@ -89,21 +81,12 @@ public class Antibody implements CollisionHandler{
 
     this.myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-//    scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
-//    scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
-    //experiment: scaling change.
-    //success! Antibodies now interact with each other when their image edges touch, so image
-    //is correctly scaled to physical object.
-    scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
-    scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
-    //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(getWidth()/image.width(),getHeight()/image.height());
 
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
   }
 
-  //why are width and height radius/2?
   float getWidth(){
     return getRadius()*2;
   }

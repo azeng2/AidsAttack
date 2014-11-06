@@ -82,15 +82,7 @@ public class AidsAttack extends Game.Default {
     // world.setContactListener(this);
     world.setContactListener(Global.contactListener);
 
-
-    // create the ground
-    //Body ground = world.createBody(new BodyDef());
-    //EdgeShape groundShape = new EdgeShape();
-    //groundShape.set(new Vec2(0, height), new Vec2(width, height));
-    //ground.createFixture(groundShape, 0.0f);
-
     this.theVirus = Virus.make(this, 15f, 0f, .2f);
-    //this.protoMag = Magnet.make(this, 30f, 20f, .2f);
 
     double doub = Math.random();
     Random r = new Random(12345);
@@ -176,7 +168,6 @@ public class AidsAttack extends Game.Default {
   public void paint(float alpha) {
     // the background automatically paints itself, so no need to do anything here!
     theVirus.paint(alpha);
-    //protoMag.paint(alpha);
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].paint(alpha);
     }
