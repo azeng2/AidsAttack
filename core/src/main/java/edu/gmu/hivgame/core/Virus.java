@@ -88,7 +88,6 @@ public class Virus implements CollisionHandler {
 
     this.myBodyFixture = body.createFixture(fixtureDef);
     this.myBodyFixture.m_userData = this;
-    // body.setLinearDamping(1.0f);
     this.body = body;
     this.body.m_userData = this;
 
@@ -330,11 +329,11 @@ public class Virus implements CollisionHandler {
     myLayer.setRotation(a);
     myHitCountLayer.setRotation(a);
     //commented out temporarily for graphics layer testing
+    //this is the code that makes the virus grow and shrink constantly
 //    float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
 //    float scale = (float) Math.sin(angle)*0.1f + 1f;
 //    myLayer.setScale(scaleX*scale,scaleY*scale);
 
-    // myDebugLayer.setScale(scaleX*scale,scaleY*scale);
         
     if(debugMe){
       myDebugLayer.setTranslation(x, y);

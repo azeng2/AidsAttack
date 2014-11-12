@@ -24,12 +24,16 @@ import playn.core.GroupLayer;
 import playn.core.Layer;
 import static playn.core.PlayN.pointer;
 import playn.core.Pointer;
+import static playn.core.PlayN.keyboard;
+import playn.core.Keyboard;
+import playn.core.Key;
 import playn.core.util.Callback;
 
 public class AidsAttack extends Game.Default {
 
   // Scaling of meters / pixels ratio for drawing scales
-  public static float physUnitPerScreenUnit = 1 / 20.0f;
+  public static float physUnitDenominator = 20.0f;
+  public static float physUnitPerScreenUnit = 1 / physUnitDenominator;
   private static int width = 24;
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
@@ -66,7 +70,6 @@ public class AidsAttack extends Game.Default {
     //experiment
     float sx = graphics().screenWidth()/width;
     float sy = graphics().screenHeight()/height;
-    //worldLayer.setScale(Math.min(sx,sy)/physUnitPerScreenUnit);
     worldLayer.setScale(1f / physUnitPerScreenUnit);
     graphics().rootLayer().add(worldLayer);
 
@@ -79,11 +82,12 @@ public class AidsAttack extends Game.Default {
     world = new World(gravity);
     world.setWarmStarting(true);
     world.setAutoClearForces(true);
-    // world.setContactListener(this);
     world.setContactListener(Global.contactListener);
 
+    //create the Virus object
     this.theVirus = Virus.make(this, 15f, 0f, .2f);
 
+    //Random to distribute Antibodies on screen
     double doub = Math.random();
     Random r = new Random(12345);
     antibodies = new Antibody[6];
@@ -97,28 +101,45 @@ public class AidsAttack extends Game.Default {
 
     // hook up our pointer listener
     pointer().setListener(new Pointer.Adapter() {
-	@Override
-	public void onPointerStart(Pointer.Event event) {
-	  // if (worldLoaded) {
-	  // }
-	  attractingVirus = true;
-	  virusTarget.set(physUnitPerScreenUnit * event.x(),
-			  physUnitPerScreenUnit * event.y());
-
-	}
-	@Override
-	public void onPointerEnd(Pointer.Event event) {
-	  attractingVirus = false;
-	}
-	@Override
-	public void onPointerDrag(Pointer.Event event) {
-	  attractingVirus = true;
-	  virusTarget.set(physUnitPerScreenUnit * event.x(),
-			  physUnitPerScreenUnit * event.y());
-	}
-
+	    @Override
+      public void onPointerStart(Pointer.Event event) {
+      attractingVirus = true;
+      virusTarget.set(physUnitPerScreenUnit * event.x(),
+          physUnitPerScreenUnit * event.y());
+      }
+      @Override
+      public void onPointerEnd(Pointer.Event event) {
+        attractingVirus = false;
+      }
+      @Override
+      public void onPointerDrag(Pointer.Event event) {
+        attractingVirus = true;
+        virusTarget.set(physUnitPerScreenUnit * event.x(),
+            physUnitPerScreenUnit * event.y());
+      }
     });
 
+    //hook up key listener, for global scaling in-game
+    keyboard().setListener(new Keyboard.Adapter() {
+      @Override
+      public void onKeyDown(Keyboard.Event event){
+        if(event.key() == Key.valueOf("UP")){
+          System.out.println("Key UP pressed!");
+          physUnitDenominator+=10f;
+          worldLayer.setScale(1f / physUnitPerScreenUnit);
+        }
+        else if(event.key() == Key.valueOf("DOWN")){
+          System.out.println("Key DOWN pressed!");
+          physUnitDenominator-=10f;
+          worldLayer.setScale(1f / physUnitPerScreenUnit);
+        }
+      }
+      @Override
+      public void onKeyUp(Keyboard.Event event){
+        System.out.println("Key released!");
+        //do I need to put anything here?
+      }
+    });
 
   }
 

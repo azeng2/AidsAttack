@@ -69,8 +69,6 @@ public class Antibody implements CollisionHandler{
   private void drawAntibodyImage(){
     Fixture fix = body.getFixtureList();
     CircleShape s = (CircleShape) fix.getShape();
-    float physRad = s.getRadius();
-    float screenRad = physRad / AidsAttack.physUnitPerScreenUnit;
 
     CanvasImage image = graphics().createImage(100, 100);
 
