@@ -73,7 +73,6 @@ public class Antibody implements CollisionHandler{
     CanvasImage image = graphics().createImage(100, 100);
 
     Canvas canvas = image.canvas();
-    //canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xff000000);
     canvas.fillCircle(50f,50f,50f);
 

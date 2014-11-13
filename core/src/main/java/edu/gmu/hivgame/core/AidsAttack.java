@@ -33,7 +33,7 @@ public class AidsAttack extends Game.Default {
 
   // Scaling of meters / pixels ratio for drawing scales
   public static float physUnitDenominator = 20.0f;
-  public static float physUnitPerScreenUnit = 1 / physUnitDenominator;
+  public static float physUnitPerScreenUnit = 1 / 20.0f;
   private static int width = 24;
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
@@ -125,13 +125,17 @@ public class AidsAttack extends Game.Default {
       public void onKeyDown(Keyboard.Event event){
         if(event.key() == Key.valueOf("UP")){
           System.out.println("Key UP pressed!");
-          physUnitDenominator+=10f;
-          worldLayer.setScale(1f / physUnitPerScreenUnit);
+          System.out.println("Before changes depth? "+entityLayer.depth());
+          physUnitDenominator+=1f;
+          entityLayer.setScale(physUnitDenominator);
+          entityLayer.transform();
+          System.out.println("depth? "+entityLayer.depth());
         }
         else if(event.key() == Key.valueOf("DOWN")){
           System.out.println("Key DOWN pressed!");
-          physUnitDenominator-=10f;
-          worldLayer.setScale(1f / physUnitPerScreenUnit);
+          physUnitDenominator-=1f;
+          entityLayer.setScale(physUnitDenominator);
+          entityLayer.transform();
         }
       }
       @Override

@@ -60,6 +60,7 @@ public class Virus implements CollisionHandler {
   public Vec2 position(){ return this.body().getPosition(); }
   public Fixture sensor(){ return this.mySensor; }
   public Fixture bodyFixture(){ return this.myBodyFixture; }
+  public ImageLayer layer() {return this.myLayer; }
 
   void initPhysicsBody(World world, float x, float y, float angle) {
     BodyDef bodyDef = new BodyDef();
