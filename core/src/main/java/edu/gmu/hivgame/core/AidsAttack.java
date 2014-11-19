@@ -33,7 +33,7 @@ public class AidsAttack extends Game.Default {
 
   // Scaling of meters / pixels ratio for drawing scales
   public static float physUnitDenominator = 20.0f;
-  public static float physUnitPerScreenUnit = 1 / 20.0f;
+  public static float physUnitPerScreenUnit = 1 / physUnitDenominator;
   private static int width = 24;
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
@@ -125,17 +125,23 @@ public class AidsAttack extends Game.Default {
       public void onKeyDown(Keyboard.Event event){
         if(event.key() == Key.valueOf("UP")){
           System.out.println("Key UP pressed!");
-          System.out.println("Before changes depth? "+entityLayer.depth());
-          physUnitDenominator+=1f;
-          entityLayer.setScale(physUnitDenominator);
-          entityLayer.transform();
-          System.out.println("depth? "+entityLayer.depth());
+          System.out.println("Before changes scaleX? "+worldLayer.scaleX());
+          System.out.println("Before changes scaleY? "+worldLayer.scaleY());
+          physUnitDenominator+=10f;
+          worldLayer.setScale(physUnitDenominator);
+          worldLayer.transform();
+          System.out.println("After changes scaleX? "+worldLayer.scaleX());
+          System.out.println("After changes scaleY? "+worldLayer.scaleY());
         }
         else if(event.key() == Key.valueOf("DOWN")){
           System.out.println("Key DOWN pressed!");
-          physUnitDenominator-=1f;
-          entityLayer.setScale(physUnitDenominator);
-          entityLayer.transform();
+          System.out.println("Before changes scaleX? "+worldLayer.scaleX());
+          System.out.println("Before changes scaleY? "+worldLayer.scaleY());
+          physUnitDenominator-=10f;
+          worldLayer.setScale(physUnitDenominator);
+          worldLayer.transform();
+          System.out.println("After changes scaleX? "+worldLayer.scaleX());
+          System.out.println("After changes scaleY? "+worldLayer.scaleY());
         }
       }
       @Override
