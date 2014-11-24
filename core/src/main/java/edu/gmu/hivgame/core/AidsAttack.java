@@ -104,8 +104,8 @@ public class AidsAttack extends Game.Default {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
       attractingVirus = true;
-      virusTarget.set(physUnitPerScreenUnit * event.x(),
-          physUnitPerScreenUnit * event.y());
+      virusTarget.set(1/physUnitDenominator * event.x(),
+          1/physUnitDenominator * event.y());
       }
       @Override
       public void onPointerEnd(Pointer.Event event) {
@@ -114,8 +114,8 @@ public class AidsAttack extends Game.Default {
       @Override
       public void onPointerDrag(Pointer.Event event) {
         attractingVirus = true;
-        virusTarget.set(physUnitPerScreenUnit * event.x(),
-            physUnitPerScreenUnit * event.y());
+        virusTarget.set(1/physUnitDenominator * event.x(),
+            1/physUnitDenominator * event.y());
       }
     });
 
@@ -127,7 +127,7 @@ public class AidsAttack extends Game.Default {
           System.out.println("Key UP pressed!");
           System.out.println("Before changes scaleX? "+worldLayer.scaleX());
           System.out.println("Before changes scaleY? "+worldLayer.scaleY());
-          physUnitDenominator+=10f;
+          physUnitDenominator+=1f;
           worldLayer.setScale(physUnitDenominator);
           worldLayer.transform();
           System.out.println("After changes scaleX? "+worldLayer.scaleX());
@@ -137,7 +137,7 @@ public class AidsAttack extends Game.Default {
           System.out.println("Key DOWN pressed!");
           System.out.println("Before changes scaleX? "+worldLayer.scaleX());
           System.out.println("Before changes scaleY? "+worldLayer.scaleY());
-          physUnitDenominator-=10f;
+          physUnitDenominator-=1f;
           worldLayer.setScale(physUnitDenominator);
           worldLayer.transform();
           System.out.println("After changes scaleX? "+worldLayer.scaleX());
