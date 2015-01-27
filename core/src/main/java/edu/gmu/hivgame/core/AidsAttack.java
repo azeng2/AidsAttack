@@ -16,6 +16,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.Random;
+import java.math.*;
 
 import playn.core.Game;
 import playn.core.Image;
@@ -32,8 +33,9 @@ import playn.core.util.Callback;
 public class AidsAttack extends Game.Default {
 
   // Scaling of meters / pixels ratio for drawing scales
-  public static float physUnitDenominator = 20.0f;
-  public static float physUnitPerScreenUnit = 1 / physUnitDenominator;
+  public static float screenUnitPerPhysUnit = 20.0f;
+  //used for smooth zoom
+  private static float zoomLevelGoal = 20.0f;
   private static int width = 24;
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
@@ -67,13 +69,12 @@ public class AidsAttack extends Game.Default {
 
     // create our world layer (scaled to "world space")
     worldLayer = graphics().createGroupLayer();
-    //experiment
-    float sx = graphics().screenWidth()/width;
-    float sy = graphics().screenHeight()/height;
-    worldLayer.setScale(1f / physUnitPerScreenUnit);
+    //float sx = graphics().screenWidth()/width;
+    //float sy = graphics().screenHeight()/height;
+    worldLayer.setScale(screenUnitPerPhysUnit);
     graphics().rootLayer().add(worldLayer);
 
-    // layer for adding stuff
+    //group layer to hold entities
     entityLayer = graphics().createGroupLayer();
     worldLayer.add(entityLayer);
 
@@ -88,7 +89,6 @@ public class AidsAttack extends Game.Default {
     this.theVirus = Virus.make(this, 15f, 0f, .2f);
 
     //Random to distribute Antibodies on screen
-    double doub = Math.random();
     Random r = new Random(12345);
     antibodies = new Antibody[6];
     for(int i=0; i<antibodies.length; i++){
@@ -104,8 +104,8 @@ public class AidsAttack extends Game.Default {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
       attractingVirus = true;
-      virusTarget.set(1/physUnitDenominator * event.x(),
-          1/physUnitDenominator * event.y());
+      virusTarget.set(1/screenUnitPerPhysUnit * event.x(),
+          1/screenUnitPerPhysUnit * event.y());
       }
       @Override
       public void onPointerEnd(Pointer.Event event) {
@@ -114,8 +114,8 @@ public class AidsAttack extends Game.Default {
       @Override
       public void onPointerDrag(Pointer.Event event) {
         attractingVirus = true;
-        virusTarget.set(1/physUnitDenominator * event.x(),
-            1/physUnitDenominator * event.y());
+        virusTarget.set(1/screenUnitPerPhysUnit * event.x(),
+            1/screenUnitPerPhysUnit * event.y());
       }
     });
 
@@ -125,23 +125,15 @@ public class AidsAttack extends Game.Default {
       public void onKeyDown(Keyboard.Event event){
         if(event.key() == Key.valueOf("UP")){
           System.out.println("Key UP pressed!");
-          System.out.println("Before changes scaleX? "+worldLayer.scaleX());
-          System.out.println("Before changes scaleY? "+worldLayer.scaleY());
-          physUnitDenominator+=1f;
-          worldLayer.setScale(physUnitDenominator);
-          worldLayer.transform();
-          System.out.println("After changes scaleX? "+worldLayer.scaleX());
-          System.out.println("After changes scaleY? "+worldLayer.scaleY());
+          if(zoomLevelGoal < 60f){
+            zoomLevelGoal +=1f;
+          }
         }
         else if(event.key() == Key.valueOf("DOWN")){
           System.out.println("Key DOWN pressed!");
-          System.out.println("Before changes scaleX? "+worldLayer.scaleX());
-          System.out.println("Before changes scaleY? "+worldLayer.scaleY());
-          physUnitDenominator-=1f;
-          worldLayer.setScale(physUnitDenominator);
-          worldLayer.transform();
-          System.out.println("After changes scaleX? "+worldLayer.scaleX());
-          System.out.println("After changes scaleY? "+worldLayer.scaleY());
+          if(zoomLevelGoal > 1f){
+            zoomLevelGoal -=1f;
+          }
         }
       }
       @Override
@@ -172,6 +164,24 @@ public class AidsAttack extends Game.Default {
     }
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
+    }
+    if(zoomLevelGoal > screenUnitPerPhysUnit){
+      //BigDecimal(double val, MathContext mc)
+      //MathContext(int setPrecision), where precision is number of digits to round to.
+      //selected 3 as precision to avoid rounding errors causing zoomed image to wobble
+      //BE AWARE: when zoomed to values of 100, precision of 3 causes .1 to be dropped to .0
+      BigDecimal increased = new BigDecimal(screenUnitPerPhysUnit+0.1f, new MathContext(3));
+      screenUnitPerPhysUnit = increased.floatValue();
+      System.out.println("New scale: "+screenUnitPerPhysUnit);
+      worldLayer.setScale(screenUnitPerPhysUnit);
+      worldLayer.transform();
+    }
+    else if(zoomLevelGoal < screenUnitPerPhysUnit){
+      BigDecimal decreased =new BigDecimal(screenUnitPerPhysUnit-0.1f, new MathContext(3));
+      screenUnitPerPhysUnit = decreased.floatValue();
+      System.out.println("New scale: "+screenUnitPerPhysUnit);
+      worldLayer.setScale(screenUnitPerPhysUnit);
+      worldLayer.transform();
     }
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,

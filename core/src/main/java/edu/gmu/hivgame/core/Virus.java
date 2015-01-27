@@ -131,9 +131,9 @@ public class Virus implements CollisionHandler {
   private void drawDebugImage(){
     CanvasImage image = graphics().createImage(100, 100);
     Canvas canvas = image.canvas();
-    canvas.setStrokeWidth(4);
+    canvas.setStrokeWidth(2);
     canvas.setStrokeColor(0xffffff00);
-    canvas.strokeCircle(image.width()/2f,image.height()/2f,100/2f);
+    canvas.strokeCircle(image.width()/2f,image.height()/2f,100/2f-4);
     this.myDebugLayer = graphics().createImageLayer(image);
     myDebugLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     myDebugLayer.setScale(sensorWidth()/image.width(), sensorHeight()/image.height());
@@ -212,8 +212,8 @@ public class Virus implements CollisionHandler {
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     //do we need this scaleX and scaleY?
-    scaleX = (1  / AidsAttack.physUnitPerScreenUnit) / image.width();
-    scaleY = (1  / AidsAttack.physUnitPerScreenUnit) / image.height();
+    scaleX = (AidsAttack.screenUnitPerPhysUnit) / image.width();
+    scaleY = (AidsAttack.screenUnitPerPhysUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
@@ -229,8 +229,8 @@ public class Virus implements CollisionHandler {
       @Override
       public void onSuccess(Image image) {
       	myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-        scaleX = (getWidth()  / AidsAttack.physUnitPerScreenUnit) / image.width();
-        scaleY = (getHeight() / AidsAttack.physUnitPerScreenUnit) / image.height();
+        scaleX = (getWidth()  * AidsAttack.screenUnitPerPhysUnit) / image.width();
+        scaleY = (getHeight() * AidsAttack.screenUnitPerPhysUnit) / image.height();
        	// System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
   	    myLayer.setScale(scaleX,scaleY);
   	    myLayer.setTranslation(x(), y());
