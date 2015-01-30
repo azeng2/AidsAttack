@@ -188,15 +188,17 @@ public class AidsAttack extends Game.Default {
     //and they implement the interface CollisionHandler.
     Contact contact = world.getContactList();
     while(contact != null){
-      Fixture fixtureA = contact.getFixtureA();
-      Fixture fixtureB = contact.getFixtureB();
-      if(fixtureA.m_userData instanceof CollisionHandler){
-        CollisionHandler ch = (CollisionHandler) fixtureA.m_userData;
-        ch.handleCollision(fixtureA, fixtureB);
-      }
-      if(fixtureB.m_userData instanceof CollisionHandler){
-        CollisionHandler ch = (CollisionHandler) fixtureB.m_userData;
-        ch.handleCollision(fixtureB, fixtureA);
+      if(contact.isTouching()){
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+        if(fixtureA.m_userData instanceof CollisionHandler){
+          CollisionHandler ch = (CollisionHandler) fixtureA.m_userData;
+          ch.handleCollision(fixtureA, fixtureB);
+        }
+        if(fixtureB.m_userData instanceof CollisionHandler){
+          CollisionHandler ch = (CollisionHandler) fixtureB.m_userData;
+          ch.handleCollision(fixtureB, fixtureA);
+        }
       }
       contact = contact.getNext();
     }
