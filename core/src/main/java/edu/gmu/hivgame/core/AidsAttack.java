@@ -153,6 +153,8 @@ public class AidsAttack extends Game.Default {
   int time = 0;
   public int time(){ return this.time; }
 
+  float zoomStep = 0.1f;
+
   @Override
   public void update(int delta) {
     time += delta;
@@ -165,24 +167,35 @@ public class AidsAttack extends Game.Default {
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
     }
-    if(zoomLevelGoal > screenUnitPerPhysUnit){
+    float diff = Math.abs(zoomLevelGoal - screenUnitPerPhysUnit);
+    if(diff > zoomStep){
+      if(screenUnitPerPhysUnit < zoomLevelGoal){
+        screenUnitPerPhysUnit += zoomStep;
+      }
+      else if(zoomLevelGoal < screenUnitPerPhysUnit){
+        screenUnitPerPhysUnit -= zoomStep;
+      }
+      worldLayer.setScale(screenUnitPerPhysUnit);
+      worldLayer.transform();
+    }
+//    if(zoomLevelGoal > screenUnitPerPhysUnit){
       //BigDecimal(double val, MathContext mc)
       //MathContext(int setPrecision), where precision is number of digits to round to.
       //selected 3 as precision to avoid rounding errors causing zoomed image to wobble
       //BE AWARE: when zoomed to values of 100, precision of 3 causes .1 to be dropped to .0
-      BigDecimal increased = new BigDecimal(screenUnitPerPhysUnit+0.1f, new MathContext(3));
-      screenUnitPerPhysUnit = increased.floatValue();
-      System.out.println("New scale: "+screenUnitPerPhysUnit);
-      worldLayer.setScale(screenUnitPerPhysUnit);
-      worldLayer.transform();
-    }
-    else if(zoomLevelGoal < screenUnitPerPhysUnit){
-      BigDecimal decreased =new BigDecimal(screenUnitPerPhysUnit-0.1f, new MathContext(3));
-      screenUnitPerPhysUnit = decreased.floatValue();
-      System.out.println("New scale: "+screenUnitPerPhysUnit);
-      worldLayer.setScale(screenUnitPerPhysUnit);
-      worldLayer.transform();
-    }
+//      BigDecimal increased = new BigDecimal(screenUnitPerPhysUnit+0.1f, new MathContext(3));
+//      screenUnitPerPhysUnit = increased.floatValue();
+//      System.out.println("New scale: "+screenUnitPerPhysUnit);
+//      worldLayer.setScale(screenUnitPerPhysUnit);
+//      worldLayer.transform();
+//    }
+//    else if(zoomLevelGoal < screenUnitPerPhysUnit){
+//      BigDecimal decreased =new BigDecimal(screenUnitPerPhysUnit-0.1f, new MathContext(3));
+//      screenUnitPerPhysUnit = decreased.floatValue();
+//      System.out.println("New scale: "+screenUnitPerPhysUnit);
+//      worldLayer.setScale(screenUnitPerPhysUnit);
+//      worldLayer.transform();
+//    }
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
     //and they implement the interface CollisionHandler.
