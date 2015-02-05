@@ -43,6 +43,7 @@ public class AidsAttack extends Game.Default {
   World world;			// Box2d world
   GroupLayer worldLayer;	// Holds everything
   GroupLayer entityLayer;	// Add entities
+  Camera camera;
 
   World physicsWorld(){ return this.world; }
 
@@ -69,8 +70,8 @@ public class AidsAttack extends Game.Default {
 
     // create our world layer (scaled to "world space")
     worldLayer = graphics().createGroupLayer();
-    //float sx = graphics().screenWidth()/width;
-    //float sy = graphics().screenHeight()/height;
+    camera = new Camera(this);
+    //FIXME: to be removed when camera is finished
     worldLayer.setScale(screenUnitPerPhysUnit);
     graphics().rootLayer().add(worldLayer);
 
@@ -104,8 +105,8 @@ public class AidsAttack extends Game.Default {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
       attractingVirus = true;
-      virusTarget.set(1/screenUnitPerPhysUnit * event.x(),
-          1/screenUnitPerPhysUnit * event.y());
+      virusTarget.set(1/camera.screenUnitPerPhysUnit * event.x(),
+          1/camera.screenUnitPerPhysUnit * event.y());
       }
       @Override
       public void onPointerEnd(Pointer.Event event) {
@@ -114,8 +115,8 @@ public class AidsAttack extends Game.Default {
       @Override
       public void onPointerDrag(Pointer.Event event) {
         attractingVirus = true;
-        virusTarget.set(1/screenUnitPerPhysUnit * event.x(),
-            1/screenUnitPerPhysUnit * event.y());
+        virusTarget.set(1/camera.screenUnitPerPhysUnit * event.x(),
+            1/camera.screenUnitPerPhysUnit * event.y());
       }
     });
 
@@ -124,17 +125,23 @@ public class AidsAttack extends Game.Default {
       @Override
       public void onKeyDown(Keyboard.Event event){
         if(event.key() == Key.valueOf("UP")){
-          System.out.println("Key UP pressed!");
-          if(zoomLevelGoal < 60f){
-            zoomLevelGoal +=1f;
-          }
+          camera.zoomIn();
         }
         else if(event.key() == Key.valueOf("DOWN")){
-          System.out.println("Key DOWN pressed!");
-          if(zoomLevelGoal > 1f){
-            zoomLevelGoal -=1f;
-          }
+          camera.zoomOut();
         }
+//        if(event.key() == Key.valueOf("UP")){
+//          System.out.println("Key UP pressed!");
+//          if(zoomLevelGoal < 60f){
+//            zoomLevelGoal +=1f;
+//          }
+//        }
+//        else if(event.key() == Key.valueOf("DOWN")){
+//          System.out.println("Key DOWN pressed!");
+//          if(zoomLevelGoal > 1f){
+//            zoomLevelGoal -=1f;
+//          }
+//        }
       }
       @Override
       public void onKeyUp(Keyboard.Event event){
@@ -167,35 +174,8 @@ public class AidsAttack extends Game.Default {
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
     }
-    float diff = Math.abs(zoomLevelGoal - screenUnitPerPhysUnit);
-    if(diff > zoomStep){
-      if(screenUnitPerPhysUnit < zoomLevelGoal){
-        screenUnitPerPhysUnit += zoomStep;
-      }
-      else if(zoomLevelGoal < screenUnitPerPhysUnit){
-        screenUnitPerPhysUnit -= zoomStep;
-      }
-      worldLayer.setScale(screenUnitPerPhysUnit);
-      worldLayer.transform();
-    }
-//    if(zoomLevelGoal > screenUnitPerPhysUnit){
-      //BigDecimal(double val, MathContext mc)
-      //MathContext(int setPrecision), where precision is number of digits to round to.
-      //selected 3 as precision to avoid rounding errors causing zoomed image to wobble
-      //BE AWARE: when zoomed to values of 100, precision of 3 causes .1 to be dropped to .0
-//      BigDecimal increased = new BigDecimal(screenUnitPerPhysUnit+0.1f, new MathContext(3));
-//      screenUnitPerPhysUnit = increased.floatValue();
-//      System.out.println("New scale: "+screenUnitPerPhysUnit);
-//      worldLayer.setScale(screenUnitPerPhysUnit);
-//      worldLayer.transform();
-//    }
-//    else if(zoomLevelGoal < screenUnitPerPhysUnit){
-//      BigDecimal decreased =new BigDecimal(screenUnitPerPhysUnit-0.1f, new MathContext(3));
-//      screenUnitPerPhysUnit = decreased.floatValue();
-//      System.out.println("New scale: "+screenUnitPerPhysUnit);
-//      worldLayer.setScale(screenUnitPerPhysUnit);
-//      worldLayer.transform();
-//    }
+    camera.updateZoom();
+    worldLayer.setScale(camera.screenUnitPerPhysUnit);
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
     //and they implement the interface CollisionHandler.
@@ -215,6 +195,8 @@ public class AidsAttack extends Game.Default {
       }
       contact = contact.getNext();
     }
+
+    worldLayer.transform();
 
     // the step delta is fixed so box2d isn't affected by framerate
     world.step(0.033f, 10, 10);
