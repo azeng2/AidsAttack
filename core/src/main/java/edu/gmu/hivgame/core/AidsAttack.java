@@ -123,6 +123,8 @@ public class AidsAttack extends Game.Default {
     //hook up key listener, for global scaling in-game
     keyboard().setListener(new Keyboard.Adapter() {
       @Override
+      //Zoom keys: Up and Down arrows. Tried + and -, but did not work for +
+      //I suspect this is because it required the shift key, but I'm not sure how to fix it.
       public void onKeyDown(Keyboard.Event event){
         if(event.key() == Key.valueOf("UP")){
           camera.zoomIn();
@@ -130,18 +132,20 @@ public class AidsAttack extends Game.Default {
         else if(event.key() == Key.valueOf("DOWN")){
           camera.zoomOut();
         }
-//        if(event.key() == Key.valueOf("UP")){
-//          System.out.println("Key UP pressed!");
-//          if(zoomLevelGoal < 60f){
-//            zoomLevelGoal +=1f;
-//          }
-//        }
-//        else if(event.key() == Key.valueOf("DOWN")){
-//          System.out.println("Key DOWN pressed!");
-//          if(zoomLevelGoal > 1f){
-//            zoomLevelGoal -=1f;
-//          }
-//        }
+        //Translation keys: h is left, j is down, k is up, l is right.
+        //for now, movement keys used in Vim
+        else if(event.key() == Key.valueOf("H")){
+          camera.translateLeft();
+        }
+        else if(event.key() == Key.valueOf("J")){
+          camera.translateDown();
+        }
+        else if(event.key() == Key.valueOf("K")){
+          camera.translateUp();
+        }
+        else if(event.key() == Key.valueOf("L")){
+          camera.translateRight();
+        }
       }
       @Override
       public void onKeyUp(Keyboard.Event event){
@@ -176,6 +180,9 @@ public class AidsAttack extends Game.Default {
     }
     camera.updateZoom();
     worldLayer.setScale(camera.screenUnitPerPhysUnit);
+    camera.updateTranslation();
+    worldLayer.setTranslation(camera.translationX, camera.translationY);
+    worldLayer.transform();
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
     //and they implement the interface CollisionHandler.
@@ -196,7 +203,6 @@ public class AidsAttack extends Game.Default {
       contact = contact.getNext();
     }
 
-    worldLayer.transform();
 
     // the step delta is fixed so box2d isn't affected by framerate
     world.step(0.033f, 10, 10);
