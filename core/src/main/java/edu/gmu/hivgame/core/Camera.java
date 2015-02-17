@@ -17,21 +17,31 @@ import playn.core.util.Callback;
 
 public class Camera{
   AidsAttack game;
-  public static float screenUnitPerPhysUnit = 20.0f;
-  public static float screenPerPhysGoal = 20.0f;
-  private static float zoomStep = 0.1f;
-  public static float translationX = 0.0f;
-  public static float translationY = 0.0f;
-  public static float tXGoal = 0.0f;
-  public static float tYGoal = 0.0f;
-  private static float tStep = 1f;
-  private static float tGoalStep = 10f;
+  public float screenUnitPerPhysUnit = 20.0f;
+  public float screenPerPhysGoal = 20.0f;
+  private float zoomStep = 0.1f;
+  public float translationX = 0.0f;
+  public float translationY = 0.0f;
+  public float tXGoal = 0.0f;
+  public float tYGoal = 0.0f;
+  private float tStep = 1f;
+  private float tGoalStep = 10f;
   private Camera(){
   }
-  //should Camera just be static? Could make zoom and translation functions static.
-  //would require passing in arguments to translation functions.
   public Camera(AidsAttack game){
     this.game = game;
+  }
+  public float physXToScreenX(float physX){
+    return (physX*screenUnitPerPhysUnit) + translationX;
+  }
+  public float screenXToPhysX(float screenX){
+    return (screenX - translationX) / screenUnitPerPhysUnit;
+  }
+  public float physYToScreenY(float physY){
+    return (physY*screenUnitPerPhysUnit) + translationY;
+  }
+  public float screenYToPhysY(float screenY){
+    return (screenY - translationY) / screenUnitPerPhysUnit;
   }
   public void zoomIn(){
     if(screenPerPhysGoal < 60f){

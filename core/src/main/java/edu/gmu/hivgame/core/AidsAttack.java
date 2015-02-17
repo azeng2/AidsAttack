@@ -72,7 +72,7 @@ public class AidsAttack extends Game.Default {
     worldLayer = graphics().createGroupLayer();
     camera = new Camera(this);
     //FIXME: to be removed when camera is finished
-    worldLayer.setScale(screenUnitPerPhysUnit);
+    worldLayer.setScale(camera.screenUnitPerPhysUnit);
     graphics().rootLayer().add(worldLayer);
 
     //group layer to hold entities
@@ -105,8 +105,8 @@ public class AidsAttack extends Game.Default {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
       attractingVirus = true;
-      virusTarget.set(1/camera.screenUnitPerPhysUnit * event.x(),
-          1/camera.screenUnitPerPhysUnit * event.y());
+      virusScreenTarget.set(event.x(),
+          event.y());
       }
       @Override
       public void onPointerEnd(Pointer.Event event) {
@@ -115,8 +115,8 @@ public class AidsAttack extends Game.Default {
       @Override
       public void onPointerDrag(Pointer.Event event) {
         attractingVirus = true;
-        virusTarget.set(1/camera.screenUnitPerPhysUnit * event.x(),
-            1/camera.screenUnitPerPhysUnit * event.y());
+        virusScreenTarget.set(event.x(),
+          event.y());
       }
     });
 
@@ -156,7 +156,7 @@ public class AidsAttack extends Game.Default {
 
   }
 
-  Vec2 virusTarget = new Vec2();
+  Vec2 virusScreenTarget = new Vec2();
   boolean attractingVirus = false;
   float minLength = 1f;
   float forceScale = 10f;
@@ -173,7 +173,10 @@ public class AidsAttack extends Game.Default {
     theVirus.update(delta);
 
     if(this.attractingVirus){
-      theVirus.attractTowards(virusTarget);
+      Vec2 virusPhysTarget = new Vec2();
+      virusPhysTarget.set(camera.screenXToPhysX(virusScreenTarget.x),
+        camera.screenYToPhysY(virusScreenTarget.y));
+      theVirus.attractTowards(virusPhysTarget);
     }
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
