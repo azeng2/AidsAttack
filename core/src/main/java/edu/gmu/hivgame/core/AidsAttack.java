@@ -33,7 +33,7 @@ import playn.core.util.Callback;
 public class AidsAttack extends Game.Default {
 
   // Scaling of meters / pixels ratio for drawing scales
-  public static float screenUnitPerPhysUnit = 20.0f;
+  //public static float screenUnitPerPhysUnit = 20.0f;
   //used for smooth zoom
   private static float zoomLevelGoal = 20.0f;
   private static int width = 24;
@@ -72,7 +72,7 @@ public class AidsAttack extends Game.Default {
     worldLayer = graphics().createGroupLayer();
     camera = new Camera(this);
     //FIXME: to be removed when camera is finished
-    worldLayer.setScale(camera.screenUnitPerPhysUnit);
+    //worldLayer.setScale(camera.screenUnitPerPhysUnit);
     graphics().rootLayer().add(worldLayer);
 
     //group layer to hold entities
@@ -135,16 +135,16 @@ public class AidsAttack extends Game.Default {
         //Translation keys: h is left, j is down, k is up, l is right.
         //for now, movement keys used in Vim
         else if(event.key() == Key.valueOf("H")){
-          camera.translateLeft();
+          camera.translateRight();
         }
         else if(event.key() == Key.valueOf("J")){
-          camera.translateDown();
-        }
-        else if(event.key() == Key.valueOf("K")){
           camera.translateUp();
         }
+        else if(event.key() == Key.valueOf("K")){
+          camera.translateDown();
+        }
         else if(event.key() == Key.valueOf("L")){
-          camera.translateRight();
+          camera.translateLeft();
         }
       }
       @Override
@@ -181,11 +181,12 @@ public class AidsAttack extends Game.Default {
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
     }
-    camera.updateZoom();
-    worldLayer.setScale(camera.screenUnitPerPhysUnit);
-    camera.updateTranslation();
-    worldLayer.setTranslation(camera.translationX, camera.translationY);
-    worldLayer.transform();
+    //camera.updateZoom();
+    //worldLayer.setScale(camera.screenUnitPerPhysUnit);
+    //camera.updateTranslation();
+    //worldLayer.setTranslation(camera.translationX, camera.translationY);
+    //worldLayer.transform();
+    camera.update();
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
     //and they implement the interface CollisionHandler.

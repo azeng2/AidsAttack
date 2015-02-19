@@ -212,8 +212,8 @@ public class Virus implements CollisionHandler {
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     //do we need this scaleX and scaleY?
-    scaleX = (AidsAttack.screenUnitPerPhysUnit) / image.width();
-    scaleY = (AidsAttack.screenUnitPerPhysUnit) / image.height();
+    scaleX = (game.camera.screenUnitPerPhysUnit) / image.width();
+    scaleY = (game.camera.screenUnitPerPhysUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
@@ -229,8 +229,8 @@ public class Virus implements CollisionHandler {
       @Override
       public void onSuccess(Image image) {
       	myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-        scaleX = (getWidth()  * AidsAttack.screenUnitPerPhysUnit) / image.width();
-        scaleY = (getHeight() * AidsAttack.screenUnitPerPhysUnit) / image.height();
+        scaleX = (getWidth()  * game.camera.screenUnitPerPhysUnit) / image.width();
+        scaleY = (getHeight() * game.camera.screenUnitPerPhysUnit) / image.height();
        	// System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
   	    myLayer.setScale(scaleX,scaleY);
   	    myLayer.setTranslation(x(), y());
