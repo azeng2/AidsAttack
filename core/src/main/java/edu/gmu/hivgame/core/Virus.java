@@ -108,7 +108,10 @@ public class Virus implements CollisionHandler {
   public void handleCollision(Fixture me, Fixture other){
     if(me == this.myBodyFixture && other.m_userData instanceof Antibody){
       this.addHit();
-      //((Antibody) other.m_userData).destroy();
+      ((Antibody) other.m_userData).destroy();
+      if(this.getHitCount() >= 3){
+        game.gameOver();
+      }
     }
     if(me == this.mySensor){
       System.out.println("I've been spotted by "+other.m_userData);

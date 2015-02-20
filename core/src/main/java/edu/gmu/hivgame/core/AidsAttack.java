@@ -22,6 +22,9 @@ import playn.core.Game;
 import playn.core.Image;
 import playn.core.ImageLayer;
 import playn.core.GroupLayer;
+import playn.core.CanvasImage;
+import playn.core.Canvas;
+import playn.core.SurfaceImage;
 import playn.core.Layer;
 import static playn.core.PlayN.pointer;
 import playn.core.Pointer;
@@ -154,6 +157,20 @@ public class AidsAttack extends Game.Default {
       }
     });
 
+  }
+
+  //TODO: call this when Virus has 6 hits on it.
+  public void gameOver(){
+    //create surface layer with 'game over'
+    CanvasImage image = graphics().createImage(200,200);
+    Canvas canvas = image.canvas();
+    canvas.setFillColor(0xff050505);
+    canvas.drawText("Game Over!",100,100);
+    ImageLayer gameOverLayer = graphics().createImageLayer(image);
+    graphics().rootLayer().add(gameOverLayer);
+    pointer().setListener(null);
+    //layer should be translucent background color w/ opaque text in center.
+    //pointer listener should be null so mouse clicks don't continue to move virus.
   }
 
   Vec2 virusScreenTarget = new Vec2();
