@@ -38,7 +38,7 @@ public class AidsAttack extends Game.Default {
   // Scaling of meters / pixels ratio for drawing scales
   //public static float screenUnitPerPhysUnit = 20.0f;
   //used for smooth zoom
-  private static float zoomLevelGoal = 20.0f;
+  //private static float zoomLevelGoal = 20.0f;
   private static int width = 24;
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
@@ -46,7 +46,8 @@ public class AidsAttack extends Game.Default {
   World world;			// Box2d world
   GroupLayer worldLayer;	// Holds everything
   GroupLayer entityLayer;	// Add entities
-  Camera camera;
+  GroupLayer buttonLayer; // contain buttons which do not scale with image
+  public Camera camera;
 
   World physicsWorld(){ return this.world; }
 
@@ -58,6 +59,9 @@ public class AidsAttack extends Game.Default {
   }
   public void removeLayer(Layer l){
     this.entityLayer.remove(l);
+  }
+  public void addButton(Layer l){
+    this.buttonLayer.add(l);
   }
 
   public AidsAttack() {
@@ -81,6 +85,12 @@ public class AidsAttack extends Game.Default {
     //group layer to hold entities
     entityLayer = graphics().createGroupLayer();
     worldLayer.add(entityLayer);
+
+    //group layer to hold non-scaling layers
+    //intended for manually-created buttons
+    buttonLayer = graphics().createGroupLayer();
+    graphics().rootLayer().add(buttonLayer);
+    Button zoomInButton = Button.make(this,50,25,"+");
 
     // create the physics world
     Vec2 gravity = new Vec2(0.0f, 0.0f);
@@ -159,6 +169,7 @@ public class AidsAttack extends Game.Default {
 
   }
 
+
   //TODO: call this when Virus has 6 hits on it.
   public void gameOver(){
     //create surface layer with 'game over'
@@ -169,6 +180,7 @@ public class AidsAttack extends Game.Default {
     ImageLayer gameOverLayer = graphics().createImageLayer(image);
     graphics().rootLayer().add(gameOverLayer);
     pointer().setListener(null);
+    keyboard().setListener(null);
     //layer should be translucent background color w/ opaque text in center.
     //pointer listener should be null so mouse clicks don't continue to move virus.
   }
@@ -198,11 +210,6 @@ public class AidsAttack extends Game.Default {
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
     }
-    //camera.updateZoom();
-    //worldLayer.setScale(camera.screenUnitPerPhysUnit);
-    //camera.updateTranslation();
-    //worldLayer.setTranslation(camera.translationX, camera.translationY);
-    //worldLayer.transform();
     camera.update();
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
