@@ -32,6 +32,7 @@ import static playn.core.PlayN.keyboard;
 import playn.core.Keyboard;
 import playn.core.Key;
 import playn.core.util.Callback;
+import playn.core.*;
 
 public class AidsAttack extends Game.Default {
 
@@ -69,7 +70,10 @@ public class AidsAttack extends Game.Default {
   }
 
   @Override
-  public void init() {
+  public void init(){
+    startLevelOne();
+  }
+  public void startLevelOne() {
     // create and add background image layer
     Image bgImage = assets().getImage("images/bg.png");
     ImageLayer bgLayer = graphics().createImageLayer(bgImage);
@@ -90,7 +94,12 @@ public class AidsAttack extends Game.Default {
     //intended for manually-created buttons
     buttonLayer = graphics().createGroupLayer();
     graphics().rootLayer().add(buttonLayer);
-    Button zoomInButton = Button.make(this,50,25,"+");
+    Button zoomInButton = Button.make(this,10f,10f,"+");
+    zoomInButton.addFunctionality(Button.ButtonFunction.ZOOM_IN);
+    Button zoomOutButton = Button.make(this,10f,40f,"-");
+    zoomOutButton.addFunctionality(Button.ButtonFunction.ZOOM_OUT);
+    Button resetButton = Button.make(this,10f,70f,"reset");
+    resetButton.addFunctionality(Button.ButtonFunction.RESET);
 
     // create the physics world
     Vec2 gravity = new Vec2(0.0f, 0.0f);
@@ -117,9 +126,12 @@ public class AidsAttack extends Game.Default {
     pointer().setListener(new Pointer.Adapter() {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
-      attractingVirus = true;
-      virusScreenTarget.set(event.x(),
-          event.y());
+        Events.Flags flags = event.flags();
+        if(!flags.getPreventDefault()){
+          attractingVirus = true;
+          virusScreenTarget.set(event.x(),
+            event.y());
+        }
       }
       @Override
       public void onPointerEnd(Pointer.Event event) {
@@ -167,6 +179,8 @@ public class AidsAttack extends Game.Default {
       }
     });
 
+    //method in Interface Platform, same place we call graphics(), keyboard(), etc from
+    //setPropagateEvents(false);
   }
 
 

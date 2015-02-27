@@ -32,8 +32,15 @@ import static playn.core.PlayN.keyboard;
 import playn.core.Keyboard;
 import playn.core.Key;
 import playn.core.util.Callback;
+import playn.core.*;
 
+//public enum ButtonFunction{
+  //ZOOM_IN, ZOOM_OUT, RESET
+//}
 public class Button{
+  public enum ButtonFunction{
+    ZOOM_IN, ZOOM_OUT, RESET
+  }
   //in what units? pixels?
   private float width;
   private float height;
@@ -43,16 +50,16 @@ public class Button{
   //on ImageLayer, need pointer listener. Should call whatever the button does.
   ImageLayer buttonImage;
   private Button(){}
-  public static Button make(AidsAttack game, float width, float height, String label){
+  public static Button make(AidsAttack game, float xPos, float yPos, String label){
     Button b = new Button();
     b.game = game;
-    b.width = width;
-    b.height = height;
+    b.width = 50f;
+    b.height = 25f;
     b.label = label;
-    b.build();
+    b.build(xPos, yPos);
     return b;
   }
-  private void build(){
+  private void build(float xPos, float yPos){
     CanvasImage image = graphics().createImage(this.width, this.height);
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(2);
@@ -61,13 +68,60 @@ public class Button{
     canvas.setFillColor(0xffff0000);
     canvas.drawText(this.label,this.width/3f,this.height/2f);
     this.buttonImage = graphics().createImageLayer(image);
-    this.buttonImage.setTranslation(10f,10f);
-    this.buttonImage.addListener(new Pointer.Adapter() {
-      @Override
-      public void onPointerStart(Pointer.Event event) {
-        game.camera.zoomIn();
-      }
-    });
+    this.buttonImage.setTranslation(xPos,yPos);
     game.addButton(this.buttonImage);
+  }
+  //called after button is created, has finite list of functionalities currently.
+  public void addFunctionality(ButtonFunction buttonFunction){
+    switch(buttonFunction){
+      case ZOOM_IN:
+        this.buttonImage.addListener(new Pointer.Adapter() {
+          @Override
+          public void onPointerStart(Pointer.Event event) {
+            game.camera.zoomIn();
+            Events.Flags flags = event.flags();
+            flags.setPreventDefault(true);
+            event.capture();
+          }
+          @Override
+          public void onPointerDrag(Pointer.Event event){
+            event.capture();
+          }
+          @Override
+          public void onPointerEnd(Pointer.Event event){
+            Events.Flags flags = event.flags();
+            flags.setPreventDefault(true);
+          }
+        });
+        break;
+      case ZOOM_OUT:
+        this.buttonImage.addListener(new Pointer.Adapter() {
+          @Override
+          public void onPointerStart(Pointer.Event event) {
+            game.camera.zoomOut();
+            Events.Flags flags = event.flags();
+            flags.setPreventDefault(true);
+            event.capture();
+          }
+          @Override
+          public void onPointerDrag(Pointer.Event event){
+            event.capture();
+          }
+          @Override
+          public void onPointerEnd(Pointer.Event event){
+            Events.Flags flags = event.flags();
+            flags.setPreventDefault(true);
+          }
+        });
+        break;
+      case RESET:
+        this.buttonImage.addListener(new Pointer.Adapter() {
+          @Override
+          public void onPointerStart(Pointer.Event event){
+            game.startLevelOne();
+          }
+        });
+        break;
+    }
   }
 }
