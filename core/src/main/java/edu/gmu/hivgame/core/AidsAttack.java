@@ -17,6 +17,7 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.Random;
 import java.math.*;
+import pythagoras.f.Point;
 
 import playn.core.Game;
 import playn.core.Image;
@@ -77,13 +78,13 @@ public class AidsAttack extends Game.Default {
     // create and add background image layer
     Image bgImage = assets().getImage("images/bg.png");
     ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+    bgLayer.setDepth(0f);
     graphics().rootLayer().add(bgLayer);
 
     // create our world layer (scaled to "world space")
     worldLayer = graphics().createGroupLayer();
+    worldLayer.setDepth(2f);
     camera = new Camera(this);
-    //FIXME: to be removed when camera is finished
-    //worldLayer.setScale(camera.screenUnitPerPhysUnit);
     graphics().rootLayer().add(worldLayer);
 
     //group layer to hold entities
@@ -93,13 +94,35 @@ public class AidsAttack extends Game.Default {
     //group layer to hold non-scaling layers
     //intended for manually-created buttons
     buttonLayer = graphics().createGroupLayer();
+    buttonLayer.setDepth(4f);
     graphics().rootLayer().add(buttonLayer);
+
     Button zoomInButton = Button.make(this,10f,10f,"+");
-    zoomInButton.addFunctionality(Button.ButtonFunction.ZOOM_IN);
+    zoomInButton.buttonImage.addListener(new Pointer.Adapter() {
+          @Override
+          public void onPointerStart(Pointer.Event event) {
+            camera.zoomIn();
+          }
+    });
     Button zoomOutButton = Button.make(this,10f,40f,"-");
-    zoomOutButton.addFunctionality(Button.ButtonFunction.ZOOM_OUT);
+    zoomOutButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event) {
+        camera.zoomOut();
+      }
+    });
     Button resetButton = Button.make(this,10f,70f,"reset");
-    resetButton.addFunctionality(Button.ButtonFunction.RESET);
+    resetButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event){
+        worldLayer.destroyAll();
+        buttonLayer.destroyAll();
+        startLevelOne();
+      }
+    });
+    System.out.println("bgLayer's depth: "+bgLayer.depth());
+    System.out.println("worldLayer's depth: "+worldLayer.depth());
+    System.out.println("buttonLayer's depth: "+buttonLayer.depth());
 
     // create the physics world
     Vec2 gravity = new Vec2(0.0f, 0.0f);
@@ -123,14 +146,22 @@ public class AidsAttack extends Game.Default {
 
 
     // hook up our pointer listener
+    // currently doesn't do anything, itself.
+    //pointer().setListener(new Pointer.Adapter(){});
+    // switch original to set for worldLayer
     pointer().setListener(new Pointer.Adapter() {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
-        Events.Flags flags = event.flags();
-        if(!flags.getPreventDefault()){
+        Point p = new Point(event.x(), event.y());
+        System.out.printf("Point p is at: %f, %f.\n",p.x(), p.y());
+        Layer hit = buttonLayer.hitTest(p);
+        if(hit != null){
+          System.out.println("Hit a button!");
+        }
+        else{
           attractingVirus = true;
           virusScreenTarget.set(event.x(),
-            event.y());
+              event.y());
         }
       }
       @Override
@@ -139,9 +170,17 @@ public class AidsAttack extends Game.Default {
       }
       @Override
       public void onPointerDrag(Pointer.Event event) {
-        attractingVirus = true;
-        virusScreenTarget.set(event.x(),
-          event.y());
+        Point p = new Point(event.x(), event.y());
+        System.out.printf("Point p is at: %f, %f.\n",p.x(), p.y());
+        Layer hit = buttonLayer.hitTest(p);
+        if(hit != null){
+          System.out.println("Hit a button!");
+        }
+        else{
+          attractingVirus = true;
+          virusScreenTarget.set(event.x(),
+            event.y());
+        }
       }
     });
 
