@@ -101,14 +101,34 @@ public class AidsAttack extends Game.Default {
     zoomInButton.buttonImage.addListener(new Pointer.Adapter() {
           @Override
           public void onPointerStart(Pointer.Event event) {
-            camera.zoomIn();
+            camera.zoomingIn = true;
+            camera.zoomingOut = false;
+          }
+          @Override
+          public void onPointerDrag(Pointer.Event event){
+            camera.zoomingIn = true;
+            camera.zoomingOut = false;
+          }
+          @Override
+          public void onPointerEnd(Pointer.Event event){
+            camera.zoomingIn = false;
           }
     });
     Button zoomOutButton = Button.make(this,10f,40f,"-");
     zoomOutButton.buttonImage.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event) {
-        camera.zoomOut();
+        camera.zoomingOut = true;
+        camera.zoomingIn = false;
+      }
+      @Override
+      public void onPointerDrag(Pointer.Event event){
+        camera.zoomingOut = true;
+        camera.zoomingIn = false;
+      }
+      @Override
+      public void onPointerEnd(Pointer.Event event){
+        camera.zoomingOut = false;
       }
     });
     Button resetButton = Button.make(this,10f,70f,"reset");
@@ -198,16 +218,16 @@ public class AidsAttack extends Game.Default {
         }
         //Translation keys: h is left, j is down, k is up, l is right.
         //for now, movement keys used in Vim
-        else if(event.key() == Key.valueOf("H")){
+        else if(event.key() == Key.valueOf("A")){
           camera.translateRight();
         }
-        else if(event.key() == Key.valueOf("J")){
+        else if(event.key() == Key.valueOf("S")){
           camera.translateUp();
         }
-        else if(event.key() == Key.valueOf("K")){
+        else if(event.key() == Key.valueOf("W")){
           camera.translateDown();
         }
-        else if(event.key() == Key.valueOf("L")){
+        else if(event.key() == Key.valueOf("D")){
           camera.translateLeft();
         }
       }

@@ -26,6 +26,8 @@ public class Camera{
   public float tYGoal = 0.0f;
   private float tStep = 1f;
   private float tGoalStep = 10f;
+  public boolean zoomingIn = false;
+  public boolean zoomingOut = false;
   private Camera(){
   }
   public Camera(AidsAttack game){
@@ -46,12 +48,12 @@ public class Camera{
   }
   public void zoomIn(){
     if(screenPerPhysGoal < 60f){
-      screenPerPhysGoal += 1f;
+      screenPerPhysGoal += .1f;
     }
   }
   public void zoomOut(){
     if(screenPerPhysGoal > 1f){
-      screenPerPhysGoal -= 1f;
+      screenPerPhysGoal -= .1f;
     }
   }
   public void translateLeft(){
@@ -89,6 +91,12 @@ public class Camera{
     //game.worldLayer.transform();
   }
   public void updateZoom(){
+    if(zoomingIn){
+      zoomIn();
+    }
+    else if(zoomingOut){
+      zoomOut();
+    }
     float diff = Math.abs(screenPerPhysGoal - screenUnitPerPhysUnit);
     if(diff > zoomStep){
       if(screenUnitPerPhysUnit < screenPerPhysGoal){
