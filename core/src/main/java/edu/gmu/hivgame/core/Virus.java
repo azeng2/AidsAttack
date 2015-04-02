@@ -71,6 +71,7 @@ public class Virus implements CollisionHandler {
     bodyDef.angularDamping = 2.0f;
     bodyDef.linearDamping = 1.0f;
     Body body = world.createBody(bodyDef);
+    body.setSleepingAllowed(false);
 
     // Define a simple square for the internal virus
     PolygonShape polygonShape = new PolygonShape();

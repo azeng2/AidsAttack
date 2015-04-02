@@ -69,6 +69,24 @@ public class Camera{
     tYGoal +=tGoalStep;
   }
   public void updateTranslation(){
+    /*float virusXFromCenter = physXToScreenX(game.theVirus.x()) - game.getCenterX();
+    float virusYFromCenter = physYToScreenY(game.theVirus.y()) - game.getCenterY();
+    if(virusXFromCenter > game.getCenterX()){
+      System.out.println("Translating Left!");
+      translateLeft();
+    }
+    else if(virusXFromCenter < game.getCenterX()){
+      System.out.println("Translating Right!");
+      translateRight();
+    }
+    if(virusYFromCenter > game.getCenterY()){
+      System.out.println("Translating Down!");
+      translateDown();
+    }
+    else if(virusYFromCenter < game.getCenterY()){
+      System.out.println("Translating Up!");
+      translateUp();
+    }*/
     float xDiff = Math.abs(tXGoal - translationX);
     if(xDiff > tStep){
       if(translationX < tXGoal){

@@ -47,6 +47,94 @@ public class Cell implements CollisionHandler{
   public Fixture bodyFixture(){ return this.myBodyFixture; }
   public ImageLayer layer() {return this.myLayer; }
 
-  public void handleCollision(Fixture me, Fixture other){
+  private Cell(){}
+  public static Cell make(AidsAttack game, float x, float y, float ang){
+    Cell c = new Cell();
+    c.game = game;
+    c.initPhysicsBody(game.physicsWorld(), x, y, ang);
+    c.drawCellImage();
+    c.game.addLayer(c.myLayer);
+    c.prevX = c.x(); c.prevY = c.y(); c.prevA = c.ang();
+    return c;
   }
+
+  void initPhysicsBody(World world, float x, float y, float angle){
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyType.DYNAMIC;
+    bodyDef.position = new Vec2(x, y);
+    bodyDef.angle = angle;
+    bodyDef.linearDamping = 2f;
+    Body body = world.createBody(bodyDef);
+    body.setSleepingAllowed(false);
+
+    CircleShape circleShape = new CircleShape();
+    circleShape.m_radius = getRadius();
+    // density is 1.0f   
+    this.myBodyFixture = body.createFixture(circleShape, 1.0f);
+    this.myBodyFixture.m_userData = this;
+
+    this.body = body;
+    this.body.m_userData = this;
+  }
+
+  private void drawCellImage(){
+    Fixture fix = body.getFixtureList();
+    CircleShape s = (CircleShape) fix.getShape();
+
+    CanvasImage image = graphics().createImage(100, 100);
+
+    Canvas canvas = image.canvas();
+    canvas.setStrokeColor(0xff888800);
+    canvas.fillCircle(50f,50f,50f);
+
+    this.myLayer = graphics().createImageLayer(image);
+    myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
+    myLayer.setScale(getWidth()/image.width(),getHeight()/image.height());
+
+    myLayer.setTranslation(x(), y());
+    myLayer.setRotation(ang());
+  }
+
+  float getWidth(){
+    return getRadius()*2;
+  }
+  float getHeight(){
+    return getRadius()*2;
+  }
+  float getRadius(){
+    return 10f;
+  }
+  float x(){
+    return body.getPosition().x;
+  }
+  float y(){
+    return body.getPosition().y;
+  }
+  float ang(){
+    return body.getAngle();
+  }
+
+  public void paint(float alpha){
+    float x = (x() * alpha) + (prevX * (1f - alpha));
+    float y = (y() * alpha) + (prevY * (1f - alpha));
+    float a = (ang() * alpha) + (prevA * (1f - alpha));
+    myLayer.setTranslation(x, y);
+    myLayer.setRotation(a);
+
+    float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
+  }
+
+  public void update(float delta){
+    prevX = x();
+    prevY = y();
+    prevA = ang();
+  }
+
+  public void handleCollision(Fixture me, Fixture other){
+    if(other.m_userData instanceof Virus){
+      Virus v = (Virus) other.m_userData;
+      System.out.println("Collided with virus!");
+      game.gameOver();
+    }
+  }      
 }

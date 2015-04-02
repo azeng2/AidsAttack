@@ -54,6 +54,7 @@ public class AidsAttack extends Game.Default {
   World physicsWorld(){ return this.world; }
 
   Virus theVirus;
+  Cell theCell;
   Antibody[] antibodies;
 
   public void addLayer(Layer l){
@@ -68,6 +69,13 @@ public class AidsAttack extends Game.Default {
 
   public AidsAttack() {
     super(UPDATE_RATE); 
+  }
+
+  public static float getCenterX(){
+    return width/2f;
+  }
+  public static float getCenterY(){
+    return height/2f;
   }
 
   @Override
@@ -135,8 +143,9 @@ public class AidsAttack extends Game.Default {
     resetButton.buttonImage.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event){
-        worldLayer.destroyAll();
-        buttonLayer.destroyAll();
+        graphics().rootLayer().destroyAll();
+        //worldLayer.destroyAll();
+        //buttonLayer.destroyAll();
         startLevelOne();
       }
     });
@@ -152,7 +161,10 @@ public class AidsAttack extends Game.Default {
     world.setContactListener(Global.contactListener);
 
     //create the Virus object
-    this.theVirus = Virus.make(this, 15f, 0f, .2f);
+    this.theVirus = Virus.make(this, 5f, 0f, .2f);
+
+    //create the Cell object
+    this.theCell = Cell.make(this, 50f, 60f, .2f);
 
     //Random to distribute Antibodies on screen
     Random r = new Random(12345);
@@ -216,8 +228,7 @@ public class AidsAttack extends Game.Default {
         else if(event.key() == Key.valueOf("DOWN")){
           camera.zoomOut();
         }
-        //Translation keys: h is left, j is down, k is up, l is right.
-        //for now, movement keys used in Vim
+        //Translation keys: a is left, s is down, w is up, d is right.
         else if(event.key() == Key.valueOf("A")){
           camera.translateRight();
         }
@@ -251,6 +262,8 @@ public class AidsAttack extends Game.Default {
     canvas.setFillColor(0xff050505);
     canvas.drawText("Game Over!",100,100);
     ImageLayer gameOverLayer = graphics().createImageLayer(image);
+    gameOverLayer.setDepth(6);
+    //Game over message does not display because it is on the bottom of rootLayer, under background
     graphics().rootLayer().add(gameOverLayer);
     pointer().setListener(null);
     keyboard().setListener(null);
@@ -265,6 +278,7 @@ public class AidsAttack extends Game.Default {
 
   int time = 0;
   public int time(){ return this.time; }
+  Random gravity = new Random(54321);
 
   float zoomStep = 0.1f;
 
@@ -272,7 +286,17 @@ public class AidsAttack extends Game.Default {
   public void update(int delta) {
     time += delta;
     time = time < 0 ? 0 : time;
+    if(time%100 == 0){
+      float r1 = (gravity.nextFloat() - 0.5f)*5f;
+      float r2 = (gravity.nextFloat() - 0.5f)*5f;
+      //float r1 = 0f;
+      //float r2 = 100f;
+      Vec2 ng = new Vec2(r1,r2);
+      System.out.printf("New gravity is: %f, %f\n",r1,r2);
+      world.setGravity(ng);
+    }
     theVirus.update(delta);
+    theCell.update(delta);
 
     if(this.attractingVirus){
       Vec2 virusPhysTarget = new Vec2();
@@ -313,6 +337,7 @@ public class AidsAttack extends Game.Default {
   public void paint(float alpha) {
     // the background automatically paints itself, so no need to do anything here!
     theVirus.paint(alpha);
+    theCell.paint(alpha);
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].paint(alpha);
     }

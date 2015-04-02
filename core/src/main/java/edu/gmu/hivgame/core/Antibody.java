@@ -55,6 +55,7 @@ public class Antibody implements CollisionHandler{
     bodyDef.angle = angle;
     bodyDef.linearDamping = 0.25f;
     Body body = world.createBody(bodyDef);
+    body.setSleepingAllowed(false);
 
     CircleShape circleShape = new CircleShape();
     circleShape.m_radius = getRadius();
