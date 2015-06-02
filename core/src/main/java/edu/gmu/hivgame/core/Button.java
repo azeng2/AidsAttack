@@ -41,7 +41,7 @@ public class Button{
   public enum ButtonFunction{
     ZOOM_IN, ZOOM_OUT, RESET
   }
-  //in what units? pixels?
+  //in screen units. All buttons have same width and height.
   private float width;
   private float height;
   private String label;

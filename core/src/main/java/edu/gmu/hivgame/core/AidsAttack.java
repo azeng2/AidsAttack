@@ -37,19 +37,15 @@ import playn.core.*;
 
 public class AidsAttack extends Game.Default {
 
-  // Scaling of meters / pixels ratio for drawing scales
-  //public static float screenUnitPerPhysUnit = 20.0f;
-  //used for smooth zoom
-  //private static float zoomLevelGoal = 20.0f;
-  private static int width = 24;
-  private static int height = 18;
+  private static int width = 24; //width of drawable area on screen
+  private static int height = 18; //height of drawable area on screen
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
 
   World world;			// Box2d world
   GroupLayer worldLayer;	// Holds everything
   GroupLayer entityLayer;	// Add entities
   GroupLayer buttonLayer; // contain buttons which do not scale with image
-  public Camera camera;
+  public Camera camera; //used to control zooming and panning
 
   World physicsWorld(){ return this.world; }
 
@@ -71,6 +67,7 @@ public class AidsAttack extends Game.Default {
     super(UPDATE_RATE); 
   }
 
+  //returns x or y coordinate of center of drawable area, in screen units
   public static float getCenterX(){
     return width/2f;
   }
@@ -82,6 +79,7 @@ public class AidsAttack extends Game.Default {
   public void init(){
     startLevelOne();
   }
+
   public void startLevelOne() {
     // create and add background image layer
     Image bgImage = assets().getImage("images/bg.png");
@@ -105,6 +103,7 @@ public class AidsAttack extends Game.Default {
     buttonLayer.setDepth(4f);
     graphics().rootLayer().add(buttonLayer);
 
+    //make(game, xpos, ypos, label)
     Button zoomInButton = Button.make(this,10f,10f,"+");
     zoomInButton.buttonImage.addListener(new Pointer.Adapter() {
           @Override
@@ -149,6 +148,7 @@ public class AidsAttack extends Game.Default {
         startLevelOne();
       }
     });
+
     System.out.println("bgLayer's depth: "+bgLayer.depth());
     System.out.println("worldLayer's depth: "+worldLayer.depth());
     System.out.println("buttonLayer's depth: "+buttonLayer.depth());
@@ -178,14 +178,13 @@ public class AidsAttack extends Game.Default {
 
 
     // hook up our pointer listener
-    // currently doesn't do anything, itself.
-    //pointer().setListener(new Pointer.Adapter(){});
-    // switch original to set for worldLayer
     pointer().setListener(new Pointer.Adapter() {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
         Point p = new Point(event.x(), event.y());
         System.out.printf("Point p is at: %f, %f.\n",p.x(), p.y());
+        System.out.println("Physical x of point p: "+camera.screenXToPhysX(p.x()));
+        System.out.println("Physical y of point p: "+camera.screenYToPhysY(p.y()));
         Layer hit = buttonLayer.hitTest(p);
         if(hit != null){
           System.out.println("Hit a button!");
@@ -241,6 +240,10 @@ public class AidsAttack extends Game.Default {
         else if(event.key() == Key.valueOf("D")){
           camera.translateLeft();
         }
+        else if(event.key() == Key.valueOf("SPACE")){
+          System.out.println("Spacebar pressed!");
+          camera.setCenter(theVirus.x(), theVirus.y());
+        }
       }
       @Override
       public void onKeyUp(Keyboard.Event event){
@@ -254,7 +257,7 @@ public class AidsAttack extends Game.Default {
   }
 
 
-  //TODO: call this when Virus has 6 hits on it.
+  //called when the virus has too many hits on it
   public void gameOver(){
     //create surface layer with 'game over'
     CanvasImage image = graphics().createImage(200,200);
@@ -292,7 +295,7 @@ public class AidsAttack extends Game.Default {
       //float r1 = 0f;
       //float r2 = 100f;
       Vec2 ng = new Vec2(r1,r2);
-      System.out.printf("New gravity is: %f, %f\n",r1,r2);
+      //System.out.printf("New gravity is: %f, %f\n",r1,r2);
       world.setGravity(ng);
     }
     theVirus.update(delta);
