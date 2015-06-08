@@ -50,6 +50,7 @@ public class Cell implements CollisionHandler{
   private Cell(){}
   public static Cell make(AidsAttack game, float x, float y, float ang){
     Cell c = new Cell();
+    c.virusContact = false;
     c.game = game;
     c.initPhysicsBody(game.physicsWorld(), x, y, ang);
     c.drawCellImage();
@@ -129,12 +130,20 @@ public class Cell implements CollisionHandler{
     prevY = y();
     prevA = ang();
   }
+  public void destroy(){
+    // remove graphics
+    this.game.removeLayer(this.myLayer);
+    // remove physics body
+    this.game.physicsWorld().destroyBody(this.body);
+  }
 
+  boolean virusContact = false;
   public void handleCollision(Fixture me, Fixture other){
-    if(other.m_userData instanceof Virus){
+    if(other.m_userData instanceof Virus && !virusContact){
+      virusContact = true;
       Virus v = (Virus) other.m_userData;
-      System.out.println("Collided with virus!");
-      game.gameOver();
+      //System.out.println("Collided with virus!");
+      //game.successLevelOne();
     }
   }      
 }

@@ -47,6 +47,7 @@ public class Virus implements CollisionHandler {
   public static Virus make(AidsAttack game, float x, float y, float ang){
     Virus v = new Virus();
     v.game = game;
+    v.cellContact = false;
     v.initPhysicsBody(game.physicsWorld(), x, y, ang);
     v.addVirusLayer();
     game.addLayer(v.myLayer);
@@ -106,6 +107,7 @@ public class Virus implements CollisionHandler {
     this.mySensor.m_userData = this;
   }
   
+  boolean cellContact = false;
   public void handleCollision(Fixture me, Fixture other){
     if(me == this.myBodyFixture && other.m_userData instanceof Antibody){
       this.addHit();
@@ -113,6 +115,10 @@ public class Virus implements CollisionHandler {
       if(this.getHitCount() >= 3){
         game.gameOver();
       }
+    }
+    if(!cellContact && me == this.myBodyFixture && other.m_userData instanceof Cell){
+      cellContact = true;
+      game.successLevelOne();
     }
     if(me == this.mySensor){
       System.out.println("I've been spotted by "+other.m_userData);
@@ -359,5 +365,12 @@ public class Virus implements CollisionHandler {
     prevX = x();
     prevY = y();
     prevA = ang();
+  }
+
+  public void destroy(){
+    // remove graphics
+    this.game.removeLayer(this.myLayer);
+    // remove physics body
+    this.game.physicsWorld().destroyBody(this.body);
   }
 }

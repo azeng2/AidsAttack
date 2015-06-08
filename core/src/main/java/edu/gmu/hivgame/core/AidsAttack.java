@@ -83,6 +83,8 @@ public class AidsAttack extends Game.Default {
     startLevelOne();
   }
   public void startLevelOne() {
+    gameOver = false;
+    successLevelOne = false;
     // create and add background image layer
     Image bgImage = assets().getImage("images/bg.png");
     ImageLayer bgLayer = graphics().createImageLayer(bgImage);
@@ -164,7 +166,7 @@ public class AidsAttack extends Game.Default {
     this.theVirus = Virus.make(this, 5f, 0f, .2f);
 
     //create the Cell object
-    this.theCell = Cell.make(this, 50f, 60f, .2f);
+    this.theCell = Cell.make(this, 30f, 30f, .2f);
 
     //Random to distribute Antibodies on screen
     Random r = new Random(12345);
@@ -254,6 +256,7 @@ public class AidsAttack extends Game.Default {
   }
 
 
+  boolean gameOver = false;
   //TODO: call this when Virus has 6 hits on it.
   public void gameOver(){
     //create surface layer with 'game over'
@@ -269,6 +272,24 @@ public class AidsAttack extends Game.Default {
     keyboard().setListener(null);
     //layer should be translucent background color w/ opaque text in center.
     //pointer listener should be null so mouse clicks don't continue to move virus.
+    gameOver = true;
+  }
+
+  boolean successLevelOne = false;
+  public void successLevelOne(){
+    //theVirus.destroy();
+    //theCell.destroy();
+    CanvasImage image = graphics().createImage(200,200);
+    Canvas canvas = image.canvas();
+    canvas.setFillColor(0xff050505);
+    canvas.drawText("Success!",100,100);
+    ImageLayer successLayer = graphics().createImageLayer(image);
+    successLayer.setDepth(6);
+    //Game over message does not display because it is on the bottom of rootLayer, under background
+    graphics().rootLayer().add(successLayer);
+    pointer().setListener(null);
+    keyboard().setListener(null);
+    successLevelOne = true;
   }
 
   Vec2 virusScreenTarget = new Vec2();
@@ -286,6 +307,14 @@ public class AidsAttack extends Game.Default {
   public void update(int delta) {
     time += delta;
     time = time < 0 ? 0 : time;
+    if(!gameOver && !successLevelOne){
+      updateLevelOne(delta);
+    }
+    camera.update();
+    // the step delta is fixed so box2d isn't affected by framerate
+    world.step(0.033f, 10, 10);
+  }
+  public void updateLevelOne(int delta){
     if(time%100 == 0){
       float r1 = (gravity.nextFloat() - 0.5f)*5f;
       float r2 = (gravity.nextFloat() - 0.5f)*5f;
@@ -293,7 +322,7 @@ public class AidsAttack extends Game.Default {
       //float r2 = 100f;
       Vec2 ng = new Vec2(r1,r2);
       System.out.printf("New gravity is: %f, %f\n",r1,r2);
-      world.setGravity(ng);
+      //world.setGravity(ng);
     }
     theVirus.update(delta);
     theCell.update(delta);
@@ -307,7 +336,6 @@ public class AidsAttack extends Game.Default {
     for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
     }
-    camera.update();
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
     //and they implement the interface CollisionHandler.
@@ -327,19 +355,17 @@ public class AidsAttack extends Game.Default {
       }
       contact = contact.getNext();
     }
-
-
-    // the step delta is fixed so box2d isn't affected by framerate
-    world.step(0.033f, 10, 10);
   }
 
   @Override
   public void paint(float alpha) {
     // the background automatically paints itself, so no need to do anything here!
-    theVirus.paint(alpha);
-    theCell.paint(alpha);
-    for(int i=0; i<antibodies.length; i++){
-      antibodies[i].paint(alpha);
+    if(!gameOver && !successLevelOne){
+      theVirus.paint(alpha);
+      theCell.paint(alpha);
+      for(int i=0; i<antibodies.length; i++){
+        antibodies[i].paint(alpha);
+      }
     }
   }
 }
