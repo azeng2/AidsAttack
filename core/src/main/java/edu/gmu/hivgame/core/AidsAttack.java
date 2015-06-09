@@ -4,7 +4,7 @@ import static playn.core.PlayN.*;
 
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.callbacks.DebugDraw;
+//import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.common.Vec2;
@@ -50,6 +50,7 @@ public class AidsAttack extends Game.Default {
   GroupLayer entityLayer;	// Add entities
   GroupLayer buttonLayer; // contain buttons which do not scale with image
   public Camera camera;
+  Level[] levels;
 
   World physicsWorld(){ return this.world; }
 
@@ -80,6 +81,8 @@ public class AidsAttack extends Game.Default {
 
   @Override
   public void init(){
+    levels = new Level[3];
+    levels[0] = LevelOne.make(this);
     startLevelOne();
   }
   public void startLevelOne() {
@@ -180,9 +183,6 @@ public class AidsAttack extends Game.Default {
 
 
     // hook up our pointer listener
-    // currently doesn't do anything, itself.
-    //pointer().setListener(new Pointer.Adapter(){});
-    // switch original to set for worldLayer
     pointer().setListener(new Pointer.Adapter() {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
@@ -250,9 +250,6 @@ public class AidsAttack extends Game.Default {
         //do I need to put anything here?
       }
     });
-
-    //method in Interface Platform, same place we call graphics(), keyboard(), etc from
-    //setPropagateEvents(false);
   }
 
 
@@ -301,7 +298,7 @@ public class AidsAttack extends Game.Default {
   public int time(){ return this.time; }
   Random gravity = new Random(54321);
 
-  float zoomStep = 0.1f;
+  //float zoomStep = 0.1f;
 
   @Override
   public void update(int delta) {

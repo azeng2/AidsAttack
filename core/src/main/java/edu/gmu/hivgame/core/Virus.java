@@ -39,6 +39,7 @@ public class Virus implements CollisionHandler {
   private Fixture mySensor;
   private ImageLayer myLayer;
   AidsAttack game;
+  Level level;
 
   boolean debugMe = true;       // set to true when debugging; draw additional info
 
