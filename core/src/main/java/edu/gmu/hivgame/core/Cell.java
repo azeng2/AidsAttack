@@ -41,6 +41,7 @@ public class Cell implements CollisionHandler{
   private Fixture mySensor;
   private ImageLayer myLayer;
   AidsAttack game;
+  Level level;
 
   public Body body(){ return this.body; }
   public Vec2 position(){ return this.body().getPosition(); }
@@ -48,13 +49,24 @@ public class Cell implements CollisionHandler{
   public ImageLayer layer() {return this.myLayer; }
 
   private Cell(){}
+  public static Cell make(AidsAttack game, Level level, float x, float y, float ang){
+    Cell c = new Cell();
+    c.virusContact = false;
+    c.game = game;
+    c.level = (LevelOne) level;
+    c.initPhysicsBody(game.physicsWorld(), x, y, ang);
+    c.drawCellImage();
+    c.level.addLayer(c.myLayer);
+    c.prevX = c.x(); c.prevY = c.y(); c.prevA = c.ang();
+    return c;
+  }
   public static Cell make(AidsAttack game, float x, float y, float ang){
     Cell c = new Cell();
     c.virusContact = false;
     c.game = game;
     c.initPhysicsBody(game.physicsWorld(), x, y, ang);
     c.drawCellImage();
-    c.game.addLayer(c.myLayer);
+    c.level.addLayer(c.myLayer);
     c.prevX = c.x(); c.prevY = c.y(); c.prevA = c.ang();
     return c;
   }
@@ -132,9 +144,9 @@ public class Cell implements CollisionHandler{
   }
   public void destroy(){
     // remove graphics
-    this.game.removeLayer(this.myLayer);
+    this.level.removeLayer(this.myLayer);
     // remove physics body
-    this.game.physicsWorld().destroyBody(this.body);
+    this.level.physicsWorld().destroyBody(this.body);
   }
 
   boolean virusContact = false;

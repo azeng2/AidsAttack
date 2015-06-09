@@ -32,8 +32,10 @@ public abstract class Level{
   GroupLayer worldLayer;	// Holds everything for this level's world.
   public Camera camera; // used for translating coordinates between physics and screen units
   public World m_world; // The world specific to this level. AidsAttack holds a reference to this.
+  public boolean gameOver;
+  public boolean success;
 
-  void initLevel(){
+  void initLevel(Camera camera){
     //each Level has its own world, and its own worldLayer
     //will need endLevel() method to destroy worldLayer
     worldLayer = graphics().createGroupLayer();
@@ -46,6 +48,7 @@ public abstract class Level{
     m_world.setWarmStarting(true);
     m_world.setAutoClearForces(true);
     m_world.setContactListener(Global.contactListener);
+    this.camera = camera;
   }
 
   void endLevel(){
@@ -53,7 +56,14 @@ public abstract class Level{
     worldLayer.destroy();
   }
 
-  abstract void update(int delta);
+  public void addLayer(Layer l){
+    this.worldLayer.add(l);
+  }
+  public void removeLayer(Layer l){
+    this.worldLayer.remove(l);
+  }
+
+  abstract void update(int delta, int time);
 
   abstract void paint(float alpha);
 

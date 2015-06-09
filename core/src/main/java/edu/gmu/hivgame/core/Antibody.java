@@ -28,10 +28,22 @@ public class Antibody implements CollisionHandler{
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
   AidsAttack game;
+  Level level;
   private boolean attracted;
 
   //Mostly mimics layout of Virus class.
   private Antibody(){
+  }
+  public static Antibody make(AidsAttack game, Level level, float x, float y, float ang){
+    Antibody a = new Antibody();
+    a.game = game;
+    a.level = level;
+    a.initPhysicsBody(level.physicsWorld(), x, y, ang);
+    a.drawAntibodyImage();
+    a.level.addLayer(a.myLayer);
+    a.prevX = a.x(); a.prevY = a.y(); a.prevA = a.ang();
+    a.attracted = false;
+    return a;
   }
   public static Antibody make(AidsAttack game, float x, float y, float ang){
     Antibody a = new Antibody();
@@ -139,7 +151,7 @@ public class Antibody implements CollisionHandler{
 
   public void destroy(){
     // remove graphics
-    this.game.removeLayer(this.myLayer);
+    this.level.removeLayer(this.myLayer);
     // remove physics body
     this.game.physicsWorld().destroyBody(this.body);
   }

@@ -32,7 +32,9 @@ public class Camera{
   }
   public Camera(AidsAttack game){
     this.game = game;
-    this.game.worldLayer.setScale(screenUnitPerPhysUnit);
+  }
+  public void setWorldScale(){
+    this.game.currentLevel.worldLayer.setScale(screenUnitPerPhysUnit);
   }
   public float physXToScreenX(float physX){
     return (physX*screenUnitPerPhysUnit) + translationX;
@@ -105,7 +107,7 @@ public class Camera{
         translationY -= tStep;
       }
     }
-    game.worldLayer.setTranslation(translationX, translationY);
+    game.currentLevel.worldLayer.setTranslation(translationX, translationY);
     //game.worldLayer.transform();
   }
   public void updateZoom(){
@@ -124,12 +126,12 @@ public class Camera{
         screenUnitPerPhysUnit -= zoomStep;
       }
     }
-    game.worldLayer.setScale(screenUnitPerPhysUnit);
+    game.currentLevel.worldLayer.setScale(screenUnitPerPhysUnit);
     //game.worldLayer.transform();
   }
   public void update(){
     updateZoom();
     updateTranslation();
-    game.worldLayer.transform();
+    game.currentLevel.worldLayer.transform();
   }
 }

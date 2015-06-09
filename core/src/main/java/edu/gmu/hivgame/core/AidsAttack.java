@@ -51,8 +51,9 @@ public class AidsAttack extends Game.Default {
   GroupLayer buttonLayer; // contain buttons which do not scale with image
   public Camera camera;
   Level[] levels;
+  Level currentLevel;
 
-  World physicsWorld(){ return this.world; }
+  World physicsWorld(){ return this.currentLevel.physicsWorld(); }
 
   Virus theVirus;
   Cell theCell;
@@ -83,21 +84,114 @@ public class AidsAttack extends Game.Default {
   public void init(){
     levels = new Level[3];
     levels[0] = LevelOne.make(this);
-    startLevelOne();
-  }
-  public void startLevelOne() {
-    gameOver = false;
-    successLevelOne = false;
+    currentLevel = levels[0];
     // create and add background image layer
     Image bgImage = assets().getImage("images/bg.png");
     ImageLayer bgLayer = graphics().createImageLayer(bgImage);
     bgLayer.setDepth(0f);
     graphics().rootLayer().add(bgLayer);
+    camera = new Camera(this);
+    currentLevel.initLevel(camera);
+    camera.setWorldScale();
+
+    //group layer to hold non-scaling layers
+    //intended for manually-created buttons
+    buttonLayer = graphics().createGroupLayer();
+    buttonLayer.setDepth(4f);
+    graphics().rootLayer().add(buttonLayer);
+
+    Button zoomInButton = Button.make(this,10f,10f,"+");
+    zoomInButton.buttonImage.addListener(new Pointer.Adapter() {
+          @Override
+          public void onPointerStart(Pointer.Event event) {
+            camera.zoomingIn = true;
+            camera.zoomingOut = false;
+          }
+          @Override
+          public void onPointerDrag(Pointer.Event event){
+            camera.zoomingIn = true;
+            camera.zoomingOut = false;
+          }
+          @Override
+          public void onPointerEnd(Pointer.Event event){
+            camera.zoomingIn = false;
+          }
+    });
+    Button zoomOutButton = Button.make(this,10f,40f,"-");
+    zoomOutButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event) {
+        camera.zoomingOut = true;
+        camera.zoomingIn = false;
+      }
+      @Override
+      public void onPointerDrag(Pointer.Event event){
+        camera.zoomingOut = true;
+        camera.zoomingIn = false;
+      }
+      @Override
+      public void onPointerEnd(Pointer.Event event){
+        camera.zoomingOut = false;
+      }
+    });
+    Button resetButton = Button.make(this,10f,70f,"reset");
+    resetButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event){
+        graphics().rootLayer().destroyAll();
+        //worldLayer.destroyAll();
+        //buttonLayer.destroyAll();
+        //startLevelOne();
+        init();
+      }
+    });
+
+    //hook up key listener, for global scaling in-game
+    keyboard().setListener(new Keyboard.Adapter() {
+      @Override
+      //Zoom keys: Up and Down arrows. Tried + and -, but did not work for +
+      //I suspect this is because it required the shift key, but I'm not sure how to fix it.
+      public void onKeyDown(Keyboard.Event event){
+        if(event.key() == Key.valueOf("UP")){
+          camera.zoomIn();
+        }
+        else if(event.key() == Key.valueOf("DOWN")){
+          camera.zoomOut();
+        }
+        //Translation keys: a is left, s is down, w is up, d is right.
+        else if(event.key() == Key.valueOf("A")){
+          camera.translateRight();
+        }
+        else if(event.key() == Key.valueOf("S")){
+          camera.translateUp();
+        }
+        else if(event.key() == Key.valueOf("W")){
+          camera.translateDown();
+        }
+        else if(event.key() == Key.valueOf("D")){
+          camera.translateLeft();
+        }
+      }
+      @Override
+      public void onKeyUp(Keyboard.Event event){
+        System.out.println("Key released!");
+        //do I need to put anything here?
+      }
+    });
+  }
+  /*public void startLevelOne() {
+    gameOver = false;
+    successLevelOne = false;
+    Image bgImage = assets().getImage("images/bg.png");
+    ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+    bgLayer.setDepth(0f);
+    graphics().rootLayer().add(bgLayer);
+    //currentLevel = levels[0];
+    //levels[0].initLevel();
 
     // create our world layer (scaled to "world space")
     worldLayer = graphics().createGroupLayer();
     worldLayer.setDepth(2f);
-    camera = new Camera(this);
     graphics().rootLayer().add(worldLayer);
 
     //group layer to hold entities
@@ -250,7 +344,7 @@ public class AidsAttack extends Game.Default {
         //do I need to put anything here?
       }
     });
-  }
+  }*/
 
 
   boolean gameOver = false;
@@ -270,6 +364,7 @@ public class AidsAttack extends Game.Default {
     //layer should be translucent background color w/ opaque text in center.
     //pointer listener should be null so mouse clicks don't continue to move virus.
     gameOver = true;
+    currentLevel.gameOver = true;
   }
 
   boolean successLevelOne = false;
@@ -287,6 +382,7 @@ public class AidsAttack extends Game.Default {
     pointer().setListener(null);
     keyboard().setListener(null);
     successLevelOne = true;
+    levels[0].success = true;
   }
 
   Vec2 virusScreenTarget = new Vec2();
@@ -304,12 +400,10 @@ public class AidsAttack extends Game.Default {
   public void update(int delta) {
     time += delta;
     time = time < 0 ? 0 : time;
-    if(!gameOver && !successLevelOne){
-      updateLevelOne(delta);
-    }
+    levels[0].update(delta, time);
     camera.update();
     // the step delta is fixed so box2d isn't affected by framerate
-    world.step(0.033f, 10, 10);
+    //world.step(0.033f, 10, 10);
   }
   public void updateLevelOne(int delta){
     if(time%100 == 0){
@@ -357,12 +451,13 @@ public class AidsAttack extends Game.Default {
   @Override
   public void paint(float alpha) {
     // the background automatically paints itself, so no need to do anything here!
-    if(!gameOver && !successLevelOne){
+    currentLevel.paint(alpha);
+    /*if(!gameOver && !successLevelOne){
       theVirus.paint(alpha);
       theCell.paint(alpha);
       for(int i=0; i<antibodies.length; i++){
         antibodies[i].paint(alpha);
       }
-    }
+    }*/
   }
 }

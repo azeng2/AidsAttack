@@ -39,11 +39,24 @@ public class Virus implements CollisionHandler {
   private Fixture mySensor;
   private ImageLayer myLayer;
   AidsAttack game;
-  Level level;
+  LevelOne level;
 
   boolean debugMe = true;       // set to true when debugging; draw additional info
 
   private Virus(){
+  }
+  public static Virus make(AidsAttack game, Level level, float x, float y, float ang){
+    Virus v = new Virus();
+    v.game = game;
+    v.cellContact = false;
+    v.initPhysicsBody(level.physicsWorld(), x, y, ang);
+    v.addVirusLayer();
+    level.addLayer(v.myLayer);
+    level.addLayer(v.myDebugLayer);
+    level.addLayer(v.myHitCountLayer);
+    v.level = (LevelOne) level;
+    v.prevX = v.x(); v.prevY = v.y(); v.prevA = v.ang();
+    return v;
   }
   public static Virus make(AidsAttack game, float x, float y, float ang){
     Virus v = new Virus();
@@ -370,8 +383,8 @@ public class Virus implements CollisionHandler {
 
   public void destroy(){
     // remove graphics
-    this.game.removeLayer(this.myLayer);
+    this.level.removeLayer(this.myLayer);
     // remove physics body
-    this.game.physicsWorld().destroyBody(this.body);
+    this.level.physicsWorld().destroyBody(this.body);
   }
 }
