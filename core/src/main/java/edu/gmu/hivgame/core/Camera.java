@@ -17,6 +17,8 @@ import playn.core.util.Callback;
 
 public class Camera{
   AidsAttack game;
+  //a constant value for resetting the camera at the beginning of a level.
+  public static final float initSUPPU = 20.0f;
   public float screenUnitPerPhysUnit = 20.0f;
   public float screenPerPhysGoal = 20.0f;
   private float zoomStep = 0.1f;
@@ -35,6 +37,16 @@ public class Camera{
   }
   public void setWorldScale(){
     this.game.currentLevel.worldLayer.setScale(screenUnitPerPhysUnit);
+  }
+  public void reset(){
+    screenUnitPerPhysUnit = initSUPPU;
+    screenPerPhysGoal = initSUPPU;
+    translationX = 0.0f;
+    translationY = 0.0f;
+    tXGoal = 0.0f;
+    tYGoal = 0.0f;
+    zoomingIn = zoomingOut = false;
+    setWorldScale();
   }
   public float physXToScreenX(float physX){
     return (physX*screenUnitPerPhysUnit) + translationX;
@@ -126,7 +138,7 @@ public class Camera{
         screenUnitPerPhysUnit -= zoomStep;
       }
     }
-    game.currentLevel.worldLayer.setScale(screenUnitPerPhysUnit);
+    setWorldScale();
     //game.worldLayer.transform();
   }
   public void update(){

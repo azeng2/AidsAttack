@@ -34,10 +34,9 @@ import playn.core.Key;
 import playn.core.util.Callback;
 import playn.core.*;
 
-//First level of game: Cell approach
+// First level of game: Cell approach
 public class LevelOne extends Level{
   boolean attractingVirus;
-
   Virus theVirus;
   Cell theCell;
   Antibody[] antibodies;
@@ -58,13 +57,13 @@ public class LevelOne extends Level{
     gameOver = false;
     success = false;
 
-    //create the Virus object
+    // create the Virus object
     this.theVirus = Virus.make(this.game, this, 5f, 0f, .2f);
 
-    //create the Cell object
+    // create the Cell object
     this.theCell = Cell.make(this.game, this, 30f, 30f, .2f);
 
-    //Random to distribute Antibodies on screen
+    // Random to distribute Antibodies on screen
     Random r = new Random(12345);
     antibodies = new Antibody[6];
     for(int i=0; i<antibodies.length; i++){
@@ -74,6 +73,7 @@ public class LevelOne extends Level{
       antibodies[i] = a;
     }
 
+    // Hook up pointer listener to control Virus
     pointer().setListener(new Pointer.Adapter() {
 	    @Override
       public void onPointerStart(Pointer.Event event) {
@@ -87,6 +87,10 @@ public class LevelOne extends Level{
           attractingVirus = true;
           virusScreenTarget.set(event.x(),
               event.y());
+        }
+        hit = worldLayer.hitTest(p);
+        if(hit != null){
+          System.out.println("WorldLayer found!");
         }
       }
       @Override
@@ -110,7 +114,20 @@ public class LevelOne extends Level{
     });
   }
 
-  World physicsWorld(){ return this.m_world; }
+  @Override
+  void endLevel(){
+    super.endLevel();
+    Body bodyList = m_world.getBodyList();
+    Body nextBody;
+    while(bodyList != null){
+      nextBody = bodyList.getNext();
+      m_world.destroyBody(bodyList);
+      bodyList = nextBody;
+      nextBody = null;
+    }
+  }
+
+  //World physicsWorld(){ return this.m_world; }
 
   String levelName() {
     return "Level One";

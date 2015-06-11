@@ -64,9 +64,9 @@ public class Virus implements CollisionHandler {
     v.cellContact = false;
     v.initPhysicsBody(game.physicsWorld(), x, y, ang);
     v.addVirusLayer();
-    game.addLayer(v.myLayer);
+    /*game.addLayer(v.myLayer);
     game.addLayer(v.myDebugLayer);
-    game.addLayer(v.myHitCountLayer);
+    game.addLayer(v.myHitCountLayer);*/
     v.prevX = v.x(); v.prevY = v.y(); v.prevA = v.ang();
     return v;
   }
@@ -165,7 +165,7 @@ public class Virus implements CollisionHandler {
     myDebugLayer.setRotation(ang());
   }
 
-  //keep track of number of times the Virus has been hit by an Antibody
+  // keep track of number of times the Virus has been hit by an Antibody
   int hitCount;
   ImageLayer myHitCountLayer;
   

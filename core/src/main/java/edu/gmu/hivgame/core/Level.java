@@ -36,11 +36,23 @@ public abstract class Level{
   public boolean success;
 
   void initLevel(Camera camera){
-    //each Level has its own world, and its own worldLayer
-    //will need endLevel() method to destroy worldLayer
+    // create and add background image layer
+    Image bgImage = assets().getImage("images/bg.png");
+    ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+    bgLayer.setDepth(0f);
+    graphics().rootLayer().add(bgLayer);
+
+    // each Level has its own world, and its own worldLayer
+    // will need endLevel() method to destroy worldLayer
     worldLayer = graphics().createGroupLayer();
-    worldLayer.setDepth(2f);
+
+    // for debugging of worldLayer
+    System.out.println("RootLayer size is: "+graphics().rootLayer().size());
     graphics().rootLayer().add(worldLayer);
+    System.out.println("World Layer added");
+    System.out.println("RootLayer size is: "+graphics().rootLayer().size());
+    worldLayer.setInteractive(true);
+    System.out.println("World layer destroyed? "+worldLayer.destroyed());
 
     // create the physics world
     Vec2 gravity = new Vec2(0.0f, 0.0f);
