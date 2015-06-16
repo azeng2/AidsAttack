@@ -51,16 +51,18 @@ public class LevelTwo extends Level{
     CanvasImage image = graphics().createImage(200,200);
     Canvas canvas = image.canvas();
     canvas.setFillColor(0xff050505);
-    canvas.drawText("Level Two!",100,100);
+    canvas.drawText("Level Two!",10,100);
     ImageLayer welcomeLayer = graphics().createImageLayer(image);
-    welcomeLayer.setDepth(3f);
+    welcomeLayer.setDepth(7f);
+    //worldLayer.add(welcomeLayer);
     graphics().rootLayer().add(welcomeLayer);
     System.out.println("welcomelayer added");
     System.out.println("RootLayer size is: "+graphics().rootLayer().size());
 
+
     // make the ReverseTranscriptase
     // This should create the image as well as the physics body
-    this.theRT = ReverseTranscriptase.make(game, this, 100f, 100f, 0f);
+    this.theRT = ReverseTranscriptase.make(game, this, 5f, 0f, 0f);
 
     // hook up pointer listener
     // currently just for testing of worldLayer
@@ -75,14 +77,22 @@ public class LevelTwo extends Level{
         else{
           System.out.println("worldLayer hit!");
         }
-        hit = game.currentLevel.worldLayer.hitTest(p);
+        hit = game.buttonLayer.hitTest(p);
         if(hit != null){
-          System.out.println("WorldLayer found through game.");
+          System.out.println("Hit a button.");
+        }
+        hit = graphics().rootLayer().hitTest(p);
+        if(hit != null){
+          System.out.println("At least the root is here.");
+        }
+        else{
+          System.out.println("Something's very wrong...");
         }
       }
     });
   }
   void update(int delta, int time){
+    super.update(delta, time);
     theRT.update(delta);
 
     // the step delta is fixed so box2d isn't affected by framerate

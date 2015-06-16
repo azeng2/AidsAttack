@@ -40,16 +40,16 @@ public class AidsAttack extends Game.Default {
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
 
   // world, worldLayer and entityLayer no longer in use by AidsAttack. See Layer class.
-  GroupLayer buttonLayer; // contain buttons which do not scale with image
+  GroupLayer buttonLayer; // contains buttons which do not scale with image
   public Camera camera;
   Level[] levels;
   Level currentLevel;
 
   World physicsWorld(){ return this.currentLevel.physicsWorld(); }
 
-  Virus theVirus;
-  Cell theCell;
-  Antibody[] antibodies;
+  //Virus theVirus;
+  //Cell theCell;
+  //Antibody[] antibodies;
 
   // these methods were replaced by methods in Layer
   /*public void addLayer(Layer l){
@@ -81,7 +81,7 @@ public class AidsAttack extends Game.Default {
 
     camera = new Camera(this);
     currentLevel.initLevel(camera);
-    camera.setWorldScale();
+    //camera.setWorldScale();
 
     //hook up key listener, for global scaling in-game
     keyboard().setListener(new Keyboard.Adapter() {
@@ -107,6 +107,10 @@ public class AidsAttack extends Game.Default {
         }
         else if(event.key() == Key.valueOf("D")){
           camera.translateLeft();
+        }
+        //for testing only.
+        else if(event.key() == Key.valueOf("N")){
+          successLevelOne();
         }
       }
       @Override
@@ -196,11 +200,15 @@ public class AidsAttack extends Game.Default {
     pointer().setListener(null);
     keyboard().setListener(null);
     currentLevel.success = true;
+    System.out.println("Current level is: "+currentLevel);
     currentLevel.endLevel();
+    System.out.println("Current level is: "+currentLevel);
     graphics().rootLayer().destroyAll();
     levels[1] = LevelTwo.make(this);
     currentLevel = levels[1];
+    System.out.println("Current level is: "+currentLevel);
     currentLevel.initLevel(camera);
+    System.out.println("Current level is: "+currentLevel);
     camera.reset();
     // adds the buttons back in
     initUI();
@@ -222,15 +230,15 @@ public class AidsAttack extends Game.Default {
     time += delta;
     time = time < 0 ? 0 : time;
     //levels[0].update(delta, time);
-    currentLevel.update(delta, time);
     camera.update();
+    currentLevel.update(delta, time);
     // world is no longer updated in AidsAttack
     //world.step(0.033f, 10, 10);
   }
 
   // This method is not currently in use.
   // See update() method in Level class
-  public void updateLevelOne(int delta){
+  /*public void updateLevelOne(int delta){
     if(time%100 == 0){
       float r1 = (gravity.nextFloat() - 0.5f)*5f;
       float r2 = (gravity.nextFloat() - 0.5f)*5f;
@@ -271,7 +279,7 @@ public class AidsAttack extends Game.Default {
       }
       contact = contact.getNext();
     }
-  }
+  }*/
 
   @Override
   public void paint(float alpha) {

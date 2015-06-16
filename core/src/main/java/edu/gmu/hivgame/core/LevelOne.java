@@ -52,6 +52,7 @@ public class LevelOne extends Level{
     return lv;
   }
 
+  @Override
   void initLevel(Camera camera){
     super.initLevel(camera);
     gameOver = false;
@@ -91,6 +92,10 @@ public class LevelOne extends Level{
         hit = worldLayer.hitTest(p);
         if(hit != null){
           System.out.println("WorldLayer found!");
+        }
+        hit = graphics().rootLayer().hitTest(p);
+        if(hit == null){
+          System.out.println("Something's very wrong...");
         }
       }
       @Override
@@ -176,6 +181,7 @@ public class LevelOne extends Level{
 
   void update(int delta, int time){
     if(!gameOver && !success){
+      super.update(delta, time);
       updateLevel(delta, time);
     }
     // the step delta is fixed so box2d isn't affected by framerate

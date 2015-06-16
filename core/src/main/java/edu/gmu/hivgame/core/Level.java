@@ -45,14 +45,19 @@ public abstract class Level{
     // each Level has its own world, and its own worldLayer
     // will need endLevel() method to destroy worldLayer
     worldLayer = graphics().createGroupLayer();
+    graphics().rootLayer().addAt(worldLayer,0f,0f);
+    worldLayer.setDepth(3f);
 
-    // for debugging of worldLayer
-    System.out.println("RootLayer size is: "+graphics().rootLayer().size());
-    graphics().rootLayer().add(worldLayer);
-    System.out.println("World Layer added");
-    System.out.println("RootLayer size is: "+graphics().rootLayer().size());
-    worldLayer.setInteractive(true);
-    System.out.println("World layer destroyed? "+worldLayer.destroyed());
+    CanvasImage testImage = graphics().createImage(200,200);
+    Canvas testCanvas = testImage.canvas();
+    testCanvas.setFillColor(0xff050505);
+    testCanvas.drawText("Testing, testing, 1,2,3.",10,100);
+    ImageLayer welcomeLayer = graphics().createImageLayer(testImage);
+    welcomeLayer.setDepth(4f);
+    welcomeLayer.setScale(1f,1f);
+    graphics().rootLayer().addAt(welcomeLayer, 200f, 200f);
+
+    //worldLayer.addAt(welcomeLayer, 200f, 200f);
 
     // create the physics world
     Vec2 gravity = new Vec2(0.0f, 0.0f);
@@ -75,7 +80,10 @@ public abstract class Level{
     this.worldLayer.remove(l);
   }
 
-  abstract void update(int delta, int time);
+  void update(int delta, int time){
+    this.worldLayer.setScale(camera.screenUnitPerPhysUnit);
+    this.worldLayer.setTranslation(camera.translationX, camera.translationY);
+  }
 
   abstract void paint(float alpha);
 

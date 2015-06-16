@@ -46,7 +46,7 @@ public class Camera{
     tXGoal = 0.0f;
     tYGoal = 0.0f;
     zoomingIn = zoomingOut = false;
-    setWorldScale();
+    //setWorldScale();
   }
   public float physXToScreenX(float physX){
     return (physX*screenUnitPerPhysUnit) + translationX;
@@ -119,7 +119,7 @@ public class Camera{
         translationY -= tStep;
       }
     }
-    game.currentLevel.worldLayer.setTranslation(translationX, translationY);
+    //game.currentLevel.worldLayer.setTranslation(translationX, translationY);
     //game.worldLayer.transform();
   }
   public void updateZoom(){
@@ -144,6 +144,6 @@ public class Camera{
   public void update(){
     updateZoom();
     updateTranslation();
-    game.currentLevel.worldLayer.transform();
+    //game.currentLevel.worldLayer.transform();
   }
 }

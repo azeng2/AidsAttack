@@ -33,7 +33,7 @@ import playn.core.util.TextBlock;
 public class ReverseTranscriptase implements CollisionHandler {
   // for calculating interpolation
   private float prevX, prevY, prevA;
-  final float radius = 3f;
+  final float radius = 1f;
   final float diameter = radius*2f;
   private Body body;
   private Fixture myBodyFixture;
@@ -55,8 +55,8 @@ public class ReverseTranscriptase implements CollisionHandler {
 
     // Choose one of the following to add the image. worldLayer is not displaying at all.
     //testLayer.add(rt.myLayer);
-    graphics().rootLayer().add(rt.myLayer);
-    //level.addLayer(rt.myLayer);
+    //graphics().rootLayer().add(rt.myLayer);
+    level.addLayer(rt.myLayer);
 
     rt.level = (LevelTwo) level;
     rt.prevX = rt.x(); rt.prevY = rt.y(); rt.prevA = rt.ang();
@@ -90,12 +90,14 @@ public class ReverseTranscriptase implements CollisionHandler {
     float imageSize = 100;
     CanvasImage image = graphics().createImage(imageSize, imageSize);
     Canvas canvas = image.canvas();
-    canvas.setFillColor(0xff050505);
+    //canvas.setFillColor(0xff050505);
+    canvas.setFillColor(0xffff0000);
     canvas.fillCircle(image.width()/2f, image.height()/2f, imageSize/2f);
     this.myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width()/2f, image.height()/2f);
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
+    myLayer.setScale(diameter/imageSize, diameter/imageSize);
     myLayer.setDepth(6);
   }
 

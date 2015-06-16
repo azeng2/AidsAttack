@@ -235,9 +235,6 @@ public class Virus implements CollisionHandler {
 
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    //do we need this scaleX and scaleY?
-    scaleX = (game.camera.screenUnitPerPhysUnit) / image.width();
-    scaleY = (game.camera.screenUnitPerPhysUnit) / image.height();
     //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
