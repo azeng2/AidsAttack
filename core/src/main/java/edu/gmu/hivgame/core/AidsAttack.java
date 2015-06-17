@@ -148,6 +148,14 @@ public class AidsAttack extends Game.Default {
         startLevelOne();
       }
     });
+    // Add centering function to center camera on virus
+    Button centerButton = Button.make(this,10f,100f,"center");
+    centerButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event){
+        camera.setCenter(theVirus.x(), theVirus.y());
+      }
+    });
 
     System.out.println("bgLayer's depth: "+bgLayer.depth());
     System.out.println("worldLayer's depth: "+worldLayer.depth());
