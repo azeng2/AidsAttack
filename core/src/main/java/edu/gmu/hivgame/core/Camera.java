@@ -91,8 +91,8 @@ public class Camera{
     this.tYGoal += halfHeight - screenY;
     int count = 0;
     while (count < 1000) {
-	  updateTranslation();
-	  count++;
+      updateTranslation();
+      count++;
     }
   }
   void trackVirus(){
