@@ -89,11 +89,11 @@ public class Camera{
     float screenY = physYToScreenY(physY);
     this.tXGoal += halfWidth - screenX;
     this.tYGoal += halfHeight - screenY;
-	int count = 0;
-	while (count < 1000) {
+    int count = 0;
+    while (count < 1000) {
 	  updateTranslation();
 	  count++;
-	}
+    }
   }
   void trackVirus(){
     Virus v = this.game.theVirus;
